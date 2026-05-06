@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treino da Helle</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: #2e2e2e;
+    --accent: #c8f135;
+    --accent2: #f1d035;
+    --text: #f0f0f0;
+    --muted: #888;
+    --red: #ff4d4d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; padding: 0 0 60px; }
+  header { background: var(--surface); border-bottom: 2px solid var(--accent); padding: 24px 20px 18px; position: sticky; top: 0; z-index: 100; }
+  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; color: var(--accent); line-height: 1; }
+  .header-row { display: flex; align-items: center; justify-content: space-between; }
+  header p { font-size: 0.75rem; color: var(--muted); margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+  .sync-indicator { font-size: 0.7rem; padding: 4px 10px; border-radius: 100px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+  .sync-indicator.synced { color: var(--accent); border-color: var(--accent); }
+  .sync-indicator.syncing { color: var(--accent2); border-color: var(--accent2); }
+  .sync-indicator.error { color: var(--red); border-color: var(--red); }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .week-nav { display: flex; gap: 8px; padding: 16px 20px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 85px; z-index: 99; }
+  .week-nav::-webkit-scrollbar { display: none; }
+  .day-btn { flex-shrink: 0; background: var(--surface); border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .day-btn.active { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 600; }
+  .day-btn.rest { opacity: 0.45; cursor: default; }
+  .content { padding: 20px; max-width: 680px; margin: 0 auto; }
+  .day-header { margin-bottom: 20px; }
+  .day-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; color: var(--text); line-height: 1; }
+  .day-subtitle { font-size: 0.78rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .bike-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; padding: 4px 12px; font-size: 0.72rem; color: var(--accent2); margin-top: 10px; font-weight: 500; }
+  .exercise-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; transition: border-color 0.2s; }
+  .exercise-card:hover { border-color: #3a3a3a; }
+  .exercise-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; user-select: none; }
+  .exercise-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+  .exercise-meta { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+  .expand-icon { color: var(--muted); font-size: 1.1rem; transition: transform 0.2s; flex-shrink: 0; margin-left: 10px; }
+  .exercise-card.open .expand-icon { transform: rotate(180deg); }
+  .exercise-body { display: none; padding: 0 16px 16px; border-top: 1px solid var(--border); }
+  .exercise-card.open .exercise-body { display: block; }
+  .progression-note { font-size: 0.72rem; color: var(--accent); padding: 8px 0 12px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+  .sets-grid { display: flex; flex-direction: column; gap: 8px; }
+  .set-row { display: grid; grid-template-columns: 40px 1fr 1fr auto; gap: 8px; align-items: center; }
+  .set-label { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--accent); letter-spacing: 1px; }
+  .set-input { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.82rem; width: 100%; transition: border-color 0.15s; -webkit-appearance: none; }
+  .set-input:focus { outline: none; border-color: var(--accent); }
+  .set-input::placeholder { color: #555; }
+  .check-btn { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; font-size: 0.9rem; }
+  .check-btn.done { background: var(--accent); border-color: var(--accent); }
+  .col-headers { display: grid; grid-template-columns: 40px 1fr 1fr auto; gap: 8px; margin-bottom: 4px; }
+  .col-h { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .rest-day-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 48px 24px; text-align: center; }
+  .rest-icon { font-size: 3rem; margin-bottom: 16px; }
+  .rest-day-card h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: var(--muted); }
+  .rest-day-card p { font-size: 0.8rem; color: #555; margin-top: 8px; }
+  .save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 12px 20px; display: flex; gap: 10px; z-index: 200; }
+  .btn { flex: 1; padding: 12px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--accent); color: #111; }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-ghost { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: var(--accent); color: #111; padding: 10px 20px; border-radius: 100px; font-size: 0.82rem; font-weight: 600; z-index: 999; transition: transform 0.3s ease; white-space: nowrap; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .progress-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 8px; }
+  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s ease; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <h1>🏋️ Treino</h1>
+    <div class="sync-indicator" id="syncIndicator">
+      <div class="sync-dot"></div>
+      <span id="syncText">Conectando...</span>
+    </div>
+  </div>
+  <p>Ganho de Massa · Low Volume com Progressão</p>
+</header>
+
+<div class="week-nav" id="weekNav"></div>
+<div class="content" id="content"></div>
+
+<div class="save-bar">
+  <button class="btn btn-ghost" onclick="clearDay()">Limpar dia</button>
+  <button class="btn btn-primary" onclick="saveToCloud()">☁️ Salvar na nuvem</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD28ScvbVAsTt11cmwSg0MzOuwYwWqDTZo",
+  authDomain: "treino-helle-89cff.firebaseapp.com",
+  projectId: "treino-helle-89cff",
+  storageBucket: "treino-helle-89cff.firebasestorage.app",
+  messagingSenderId: "988594775431",
+  appId: "1:988594775431:web:9f2753b32941dcb49c5542"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window._db = db;
+window._firestoreReady = true;
+window._setDoc = setDoc;
+window._getDoc = getDoc;
+window._doc = doc;
+
+function setSyncStatus(status, text) {
+  const el = document.getElementById('syncIndicator');
+  const txt = document.getElementById('syncText');
+  if (!el) return;
+  el.className = 'sync-indicator ' + status;
+  txt.textContent = text;
+}
+
+setSyncStatus('syncing', '⏳ Carregando...');
+
+try {
+  const snap = await getDoc(doc(db, 'treino', 'dados'));
+  if (snap.exists()) {
+    const data = snap.data();
+    Object.entries(data).forEach(([k, v]) => localStorage.setItem(k, v));
+    setSyncStatus('synced', '☁️ Sincronizado');
+  } else {
+    setSyncStatus('synced', '☁️ Conectado');
+  }
+} catch(e) {
+  setSyncStatus('error', '⚠️ Sem conexão');
+}
+
+window.buildContent();
+</script>
+
+<script>
+const DAYS = [
+  {
+    key: 'seg', label: 'Seg', title: 'Lower A', subtitle: 'Glúteo + Posterior + Quad', bike: true,
+    exercises: [
+      { name: 'Hip thrust com barra', sets: 3, reps: '12' },
+      { name: 'Stiff com barra', sets: 3, reps: '12' },
+      { name: 'Leg curl (flexora)', sets: 3, reps: '12' },
+      { name: 'Abdução no cabo', sets: 3, reps: '12' },
+      { name: 'Elevação pélvica unilateral', sets: 3, reps: '12 cada' },
+    ]
+  },
+  {
+    key: 'ter', label: 'Ter', title: 'Upper A', subtitle: 'Costas + Bíceps', bike: false,
+    exercises: [
+      { name: 'Puxada frontal', sets: 3, reps: '12' },
+      { name: 'Remada curvada com barra', sets: 3, reps: '12' },
+      { name: 'Remada unilateral com haltere', sets: 3, reps: '12 cada' },
+      { name: 'Rosca direta', sets: 3, reps: '12' },
+      { name: 'Rosca martelo', sets: 3, reps: '12' },
+    ]
+  },
+  {
+    key: 'qua', label: 'Qua', title: 'Lower B', subtitle: 'Quadríceps + Glúteo', bike: true,
+    exercises: [
+      { name: 'Agachamento livre', sets: 3, reps: '12' },
+      { name: 'Leg press 45°', sets: 3, reps: '12' },
+      { name: 'Avanço com halteres', sets: 3, reps: '12 cada' },
+      { name: 'Cadeira extensora', sets: 3, reps: '12' },
+      { name: 'Agachamento sumô com haltere', sets: 3, reps: '12' },
+    ]
+  },
+  { key: 'qui', label: 'Qui', title: 'Folga', subtitle: '', rest: true },
+  {
+    key: 'sex', label: 'Sex', title: 'Upper B', subtitle: 'Peito + Ombro + Tríceps', bike: true,
+    exercises: [
+      { name: 'Supino com halteres', sets: 3, reps: '12' },
+      { name: 'Desenvolvimento com halteres', sets: 3, reps: '12' },
+      { name: 'Elevação lateral', sets: 3, reps: '12' },
+      { name: 'Tríceps corda no cabo', sets: 3, reps: '12' },
+      { name: 'Crucifixo com halteres', sets: 3, reps: '12' },
+    ]
+  },
+  {
+    key: 'sab', label: 'Sáb', title: 'Full Body Leve', subtitle: '', bike: false,
+    exercises: [
+      { name: 'Hip thrust com barra', sets: 3, reps: '12' },
+      { name: 'Puxada frontal', sets: 3, reps: '12' },
+      { name: 'Supino com halteres', sets: 3, reps: '12' },
+      { name: 'Elevação lateral', sets: 3, reps: '12' },
+      { name: 'Remada unilateral com haltere', sets: 3, reps: '12 cada' },
+    ]
+  },
+  { key: 'dom', label: 'Dom', title: 'Folga', subtitle: '', rest: true, bike: true },
+];
+
+let activeDay = 'seg';
+
+function getKey(dayKey, exIdx, setIdx, field) {
+  return `pt_${dayKey}_ex${exIdx}_s${setIdx}_${field}`;
+}
+
+function loadVal(key) { return localStorage.getItem(key) || ''; }
+function saveVal(key, val) { localStorage.setItem(key, val); }
+
+function buildNav() {
+  const nav = document.getElementById('weekNav');
+  nav.innerHTML = '';
+  DAYS.forEach(d => {
+    const btn = document.createElement('button');
+    btn.className = 'day-btn' + (d.rest ? ' rest' : '') + (d.key === activeDay ? ' active' : '');
+    btn.textContent = d.label;
+    if (!d.rest) btn.onclick = () => switchDay(d.key);
+    nav.appendChild(btn);
+  });
+}
+
+function switchDay(key) {
+  activeDay = key;
+  buildNav();
+  buildContent();
+}
+
+window.buildContent = function() {
+  const container = document.getElementById('content');
+  const day = DAYS.find(d => d.key === activeDay);
+  container.innerHTML = '';
+
+  if (day.rest) {
+    container.innerHTML = `
+      <div class="day-header">
+        <div class="day-title">${day.title}</div>
+        ${day.bike ? '<span class="bike-badge">🚴 Bike hoje</span>' : ''}
+      </div>
+      <div class="rest-day-card">
+        <div class="rest-icon">🛌</div>
+        <h2>Dia de Descanso</h2>
+        <p>Recuperação é parte do treino. Descansa!</p>
+      </div>`;
+    return;
+  }
+
+  const header = document.createElement('div');
+  header.className = 'day-header';
+  header.innerHTML = `
+    <div class="day-title">${day.title}</div>
+    <div class="day-subtitle">${day.subtitle}</div>
+    ${day.bike ? '<span class="bike-badge">🚴 Bike após academia</span>' : ''}
+  `;
+  container.appendChild(header);
+
+  day.exercises.forEach((ex, exIdx) => {
+    const card = document.createElement('div');
+    card.className = 'exercise-card';
+    card.id = `ex-${exIdx}`;
+
+    const doneCount = Array.from({length: ex.sets}, (_, i) =>
+      loadVal(getKey(day.key, exIdx, i, 'done')) === '1').filter(Boolean).length;
+    const pct = Math.round((doneCount / ex.sets) * 100);
+
+    let setsHtml = `
+      <div class="col-headers">
+        <div class="col-h"></div>
+        <div class="col-h">Carga (kg)</div>
+        <div class="col-h">Reps feitas</div>
+        <div class="col-h"></div>
+      </div>
+      <div class="sets-grid">`;
+
+    for (let s = 0; s < ex.sets; s++) {
+      const pesoVal = loadVal(getKey(day.key, exIdx, s, 'peso'));
+      const repsVal = loadVal(getKey(day.key, exIdx, s, 'reps'));
+      const isDone = loadVal(getKey(day.key, exIdx, s, 'done')) === '1';
+      setsHtml += `
+        <div class="set-row">
+          <div class="set-label">S${s+1}</div>
+          <input class="set-input" type="number" placeholder="kg" value="${pesoVal}"
+            oninput="autoSave('${day.key}',${exIdx},${s},'peso',this.value)">
+          <input class="set-input" type="number" placeholder="${ex.reps}" value="${repsVal}"
+            oninput="autoSave('${day.key}',${exIdx},${s},'reps',this.value)">
+          <button class="check-btn ${isDone ? 'done' : ''}" id="chk-${exIdx}-${s}"
+            onclick="toggleDone('${day.key}',${exIdx},${s},${ex.sets})">
+            ${isDone ? '✓' : ''}
+          </button>
+        </div>`;
+    }
+    setsHtml += '</div>';
+
+    card.innerHTML = `
+      <div class="exercise-header" onclick="toggleCard(${exIdx})">
+        <div>
+          <div class="exercise-name">${ex.name}</div>
+          <div class="exercise-meta">${ex.sets} séries × ${ex.reps} reps · 3x12→3x15→↑carga</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-${exIdx}" style="width:${pct}%"></div></div>
+        </div>
+        <span class="expand-icon">▼</span>
+      </div>
+      <div class="exercise-body">
+        <div class="progression-note">⬆ Progressão: 3×12 → 3×15 → aumentar carga → voltar p/ 3×12</div>
+        ${setsHtml}
+      </div>`;
+
+    container.appendChild(card);
+  });
+}
+
+function toggleCard(exIdx) {
+  document.getElementById(`ex-${exIdx}`).classList.toggle('open');
+}
+
+function autoSave(dayKey, exIdx, setIdx, field, val) {
+  saveVal(getKey(dayKey, exIdx, setIdx, field), val);
+}
+
+function toggleDone(dayKey, exIdx, setIdx, totalSets) {
+  const key = getKey(dayKey, exIdx, setIdx, 'done');
+  const current = loadVal(key) === '1';
+  saveVal(key, current ? '0' : '1');
+  const btn = document.getElementById(`chk-${exIdx}-${setIdx}`);
+  btn.classList.toggle('done', !current);
+  btn.textContent = !current ? '✓' : '';
+  const doneCount = Array.from({length: totalSets}, (_, i) =>
+    loadVal(getKey(dayKey, exIdx, i, 'done')) === '1').filter(Boolean).length;
+  document.getElementById(`prog-${exIdx}`).style.width = Math.round((doneCount / totalSets) * 100) + '%';
+}
+
+async function saveToCloud() {
+  if (!window._firestoreReady) { showToast('⚠️ Sem conexão com nuvem'); return; }
+  const el = document.getElementById('syncIndicator');
+  const txt = document.getElementById('syncText');
+  el.className = 'sync-indicator syncing';
+  txt.textContent = '⏳ Salvando...';
+  try {
+    const allData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k.startsWith('pt_')) allData[k] = localStorage.getItem(k);
+    }
+    await window._setDoc(window._doc(window._db, 'treino', 'dados'), allData);
+    el.className = 'sync-indicator synced';
+    txt.textContent = '☁️ Salvo!';
+    showToast('✅ Salvo na nuvem!');
+  } catch(e) {
+    el.className = 'sync-indicator error';
+    txt.textContent = '⚠️ Erro';
+    showToast('❌ Erro ao salvar');
+  }
+}
+
+window.saveToCloud = saveToCloud;
+
+function clearDay() {
+  const day = DAYS.find(d => d.key === activeDay);
+  if (!day.exercises) return;
+  if (!confirm('Limpar todos os dados de hoje?')) return;
+  day.exercises.forEach((ex, exIdx) => {
+    for (let s = 0; s < ex.sets; s++) {
+      ['peso','reps','done'].forEach(f => localStorage.removeItem(getKey(day.key, exIdx, s, f)));
+    }
+  });
+  buildContent();
+  showToast('🗑 Dia limpo!');
+}
+
+window.clearDay = clearDay;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+buildNav();
+buildContent();
+</script>
+
+</body>
+</html>
