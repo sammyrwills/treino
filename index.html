@@ -27,6 +27,7 @@
 .day-btn { flex-shrink: 0; background: #1a1a1a; border: 1px solid #2e2e2e; color: #888; padding: 7px 15px; border-radius: 100px; font-family: ‘DM Sans’, sans-serif; font-size: 0.76rem; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; -webkit-appearance: none; }
 .day-btn.active { background: #c8f135; color: #111; border-color: #c8f135; font-weight: 600; }
 .day-btn.rest { opacity: 0.5; }
+.day-btn.today { border-color: #c8f135; }
 
 .content { padding: 16px 20px; max-width: 680px; margin: 0 auto; }
 .day-header { margin-bottom: 16px; }
@@ -43,6 +44,7 @@
 .adm-btn-red { background: #ff4d4d; color: #fff; }
 .adm-btn-green { background: #c8f135; color: #111; }
 .adm-btn-gray { background: #333; color: #aaa; border: 1px solid #444; }
+.adm-btn-blue { background: #3a6fff; color: #fff; }
 
 .exercise-card { background: #1a1a1a; border: 1px solid #2e2e2e; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
 .exercise-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 15px; cursor: pointer; user-select: none; }
@@ -160,6 +162,20 @@
   </div>
 </div>
 
+<!-- Modal renomear exercício -->
+
+<div class="modal-overlay" id="renameExModal">
+  <div class="modal">
+    <h2>Renomear Exercício</h2>
+    <input type="text" id="renameExName" placeholder="Nome do exercício">
+    <input type="text" id="renameExReps" placeholder="Reps (ex: 6-8)">
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-ghost" onclick="closeModal('renameExModal')">Cancelar</button>
+      <button class="modal-btn modal-btn-primary" onclick="confirmRenameEx()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -193,7 +209,10 @@ window.buildContent(); window.buildNav();
 <script>
 const ADMIN_PASS = '1234';
 let isAdmin = false;
-let activeDay = 'seg';
+// Set active day based on current weekday
+const DAY_KEYS = ['dom','seg','ter','qua','qui','sex','sab'];
+let activeDay = DAY_KEYS[new Date().getDay()];
+let renamingExIdx = null;
 
 const DEFAULT_DAYS = [
   { key:'seg', label:'Seg', title:'Lower A', subtitle:'Glúteo + Perna', focus:'10 séries válidas · 3x6-8 pesado / 2x8-10',
@@ -225,13 +244,13 @@ function setSyncStatus(status, text) {
 
 window.buildNav = function() {
   const nav = document.getElementById('weekNav');
+  const todayKey = DAY_KEYS[new Date().getDay()];
   nav.innerHTML = '';
   getDays().forEach(d => {
     const btn = document.createElement('button');
-    // In admin mode all days are clickable; otherwise rest days are not
     const isRest = d.rest && !isAdmin;
-    btn.className = 'day-btn' + (d.rest ? ' rest' : '') + (d.key === activeDay ? ' active' : '');
-    btn.textContent = d.label;
+    btn.className = 'day-btn' + (d.rest ? ' rest' : '') + (d.key === activeDay ? ' active' : '') + (d.key === todayKey ? ' today' : '');
+    btn.textContent = d.label + (d.key === todayKey ? ' •' : '');
     btn.onclick = () => switchDay(d.key);
     if (isRest) btn.style.cursor = 'default';
     nav.appendChild(btn);
@@ -253,31 +272,24 @@ window.buildContent = function() {
   const day = days.find(d => d.key === activeDay) || days[0];
   container.innerHTML = '';
 
-  // Admin toolbar — always show when admin, even on rest days
   if (isAdmin) {
     const toolbar = document.createElement('div');
     toolbar.className = 'admin-toolbar visible';
     toolbar.innerHTML = `
-      <div class="admin-label">⚙️ Modo Admin — ${day.label}</div>
+      <div class="admin-label">⚙️ Admin — ${day.label}</div>
       <div class="admin-btns-row">
-        <button class="adm-btn adm-btn-yellow" onclick="openRename()">✏️ Renomear</button>
+        <button class="adm-btn adm-btn-yellow" onclick="openRename()">✏️ Renomear dia</button>
         ${day.rest
           ? `<button class="adm-btn adm-btn-green" onclick="toggleRestDay('${day.key}')">💪 Ativar treino</button>`
-          : `<button class="adm-btn adm-btn-red" onclick="toggleRestDay('${day.key}')">🛌 Marcar folga</button>`
-        }
-        ${!day.rest ? `<button class="adm-btn adm-btn-yellow" onclick="openAddEx()">+ Exercício</button>` : ''}
+          : `<button class="adm-btn adm-btn-red" onclick="toggleRestDay('${day.key}')">🛌 Marcar folga</button>`}
+        ${!day.rest ? `<button class="adm-btn adm-btn-green" onclick="openAddEx()">+ Exercício</button>` : ''}
       </div>`;
     container.appendChild(toolbar);
   }
 
   if (day.rest) {
     const card = document.createElement('div');
-    card.innerHTML = `
-      <div class="rest-day-card">
-        <div class="rest-icon">🛌</div>
-        <h2>Dia de Descanso</h2>
-        <p>Recuperação é parte do treino!</p>
-      </div>`;
+    card.innerHTML = `<div class="rest-day-card"><div class="rest-icon">🛌</div><h2>Dia de Descanso</h2><p>Recuperação é parte do treino!</p></div>`;
     container.appendChild(card);
     return;
   }
@@ -291,11 +303,11 @@ window.buildContent = function() {
   container.appendChild(header);
 
   (day.exercises || []).forEach((ex, exIdx) => {
-    container.appendChild(buildExCard(day, ex, exIdx));
+    container.appendChild(buildExCard(day, ex, exIdx, (day.exercises||[]).length));
   });
 }
 
-function buildExCard(day, ex, exIdx) {
+function buildExCard(day, ex, exIdx, total) {
   const card = document.createElement('div');
   card.className = 'exercise-card' + (isAdmin ? ' admin-mode' : '');
   card.id = `ex-${exIdx}`;
@@ -317,6 +329,9 @@ function buildExCard(day, ex, exIdx) {
   }
   setsHtml += '</div>';
 
+  const canUp = exIdx > 0;
+  const canDown = exIdx < total - 1;
+
   card.innerHTML = `
     <div class="exercise-header" onclick="toggleCard(${exIdx})">
       <div style="flex:1">
@@ -328,9 +343,12 @@ function buildExCard(day, ex, exIdx) {
     </div>
     <div class="exercise-body">
       <div class="admin-ex-actions">
+        <button class="adm-btn adm-btn-blue" onclick="openRenameEx('${day.key}',${exIdx})">✏️ Renomear</button>
         <button class="adm-btn adm-btn-red" onclick="deleteEx('${day.key}',${exIdx})">🗑 Remover</button>
         <button class="adm-btn adm-btn-green" onclick="addSet('${day.key}',${exIdx})">+ Série</button>
         <button class="adm-btn adm-btn-gray" onclick="delSet('${day.key}',${exIdx})">− Série</button>
+        ${canUp ? `<button class="adm-btn adm-btn-gray" onclick="moveEx('${day.key}',${exIdx},-1)">↑ Subir</button>` : ''}
+        ${canDown ? `<button class="adm-btn adm-btn-gray" onclick="moveEx('${day.key}',${exIdx},1)">↓ Descer</button>` : ''}
       </div>
       <div class="progression-note">⬆ Dupla progressão: ${ex.reps} reps → aumentar carga → repetir</div>
       ${setsHtml}
@@ -350,6 +368,47 @@ function toggleDone(dk, ei, si, total) {
   btn.textContent = !cur ? '✓' : '';
   const done = Array.from({length:total},(_,i) => loadVal(getKey(dk,ei,i,'done')) === '1').filter(Boolean).length;
   document.getElementById(`prog-${ei}`).style.width = Math.round(done/total*100) + '%';
+}
+
+function moveEx(dk, ei, dir) {
+  const days = getDays();
+  const exs = days.find(d => d.key === dk).exercises;
+  const newIdx = ei + dir;
+  if (newIdx < 0 || newIdx >= exs.length) return;
+  [exs[ei], exs[newIdx]] = [exs[newIdx], exs[ei]];
+  window._DAYS = days;
+  buildContent();
+  setTimeout(() => {
+    const card = document.getElementById(`ex-${newIdx}`);
+    if (card) card.classList.add('open');
+  }, 50);
+  showToast(dir === -1 ? '↑ Movido pra cima' : '↓ Movido pra baixo');
+}
+
+function openRenameEx(dk, ei) {
+  renamingExIdx = { dk, ei };
+  const days = getDays();
+  const ex = days.find(d => d.key === dk).exercises[ei];
+  document.getElementById('renameExName').value = ex.name;
+  document.getElementById('renameExReps').value = ex.reps;
+  document.getElementById('renameExModal').classList.add('visible');
+  setTimeout(() => document.getElementById('renameExName').focus(), 100);
+}
+
+function confirmRenameEx() {
+  if (!renamingExIdx) return;
+  const { dk, ei } = renamingExIdx;
+  const days = getDays();
+  const ex = days.find(d => d.key === dk).exercises[ei];
+  const newName = document.getElementById('renameExName').value.trim();
+  const newReps = document.getElementById('renameExReps').value.trim();
+  if (newName) ex.name = newName;
+  if (newReps) ex.reps = newReps;
+  window._DAYS = days;
+  closeModal('renameExModal');
+  buildContent();
+  setTimeout(() => { const card = document.getElementById(`ex-${ei}`); if(card) card.classList.add('open'); }, 50);
+  showToast('✅ Exercício renomeado');
 }
 
 function toggleAdmin() {
@@ -391,8 +450,7 @@ function toggleRestDay(dayKey) {
 }
 
 function openRename() {
-  const days = getDays();
-  const day = days.find(d => d.key === activeDay);
+  const day = getDays().find(d => d.key === activeDay);
   document.getElementById('newDayTitle').value = day.title || '';
   document.getElementById('newDaySubtitle').value = day.subtitle || '';
   document.getElementById('newDayFocus').value = day.focus || '';
@@ -403,9 +461,12 @@ function openRename() {
 function confirmRename() {
   const days = getDays();
   const day = days.find(d => d.key === activeDay);
-  day.title = document.getElementById('newDayTitle').value.trim() || day.title;
-  day.subtitle = document.getElementById('newDaySubtitle').value.trim();
-  day.focus = document.getElementById('newDayFocus').value.trim();
+  const t = document.getElementById('newDayTitle').value.trim();
+  const s = document.getElementById('newDaySubtitle').value.trim();
+  const f = document.getElementById('newDayFocus').value.trim();
+  if (t) day.title = t;
+  day.subtitle = s;
+  day.focus = f;
   window._DAYS = days;
   closeModal('renameModal');
   buildContent();
@@ -494,7 +555,9 @@ function showToast(msg) {
 window.toggleAdmin = toggleAdmin; window.checkAdmin = checkAdmin;
 window.toggleRestDay = toggleRestDay; window.openRename = openRename; window.confirmRename = confirmRename;
 window.openAddEx = openAddEx; window.confirmAddEx = confirmAddEx;
+window.openRenameEx = openRenameEx; window.confirmRenameEx = confirmRenameEx;
 window.deleteEx = deleteEx; window.addSet = addSet; window.delSet = delSet;
+window.moveEx = moveEx;
 window.closeModal = closeModal; window.saveToCloud = saveToCloud; window.clearDayData = clearDayData;
 window.toggleCard = toggleCard; window.autoSave = autoSave; window.toggleDone = toggleDone;
 
