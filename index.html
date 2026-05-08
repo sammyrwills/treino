@@ -7,101 +7,90 @@
 <title>Treino da Helle</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #222;
-    --border: #2e2e2e; --accent: #c8f135; --accent2: #f1d035;
-    --text: #f0f0f0; --muted: #888; --red: #ff4d4d;
-  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #0f0f0f; color: #f0f0f0; font-family: 'DM Sans', sans-serif; min-height: 100vh; padding: 0 0 70px; }
+  header { background: #1a1a1a; border-bottom: 2px solid #c8f135; padding: 20px 20px 14px; position: sticky; top: 0; z-index: 100; }
+  .header-row { display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; letter-spacing: 3px; color: #c8f135; line-height: 1; }
+  header p { font-size: 0.72rem; color: #888; margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; }
+  .header-btns { display: flex; gap: 8px; align-items: center; }
+  .sync-indicator { font-size: 0.68rem; padding: 4px 9px; border-radius: 100px; background: #222; border: 1px solid #2e2e2e; color: #888; display: flex; align-items: center; gap: 4px; }
+  .sync-indicator.synced { color: #c8f135; border-color: #c8f135; }
+  .sync-indicator.syncing { color: #f1d035; border-color: #f1d035; }
+  .sync-indicator.error { color: #ff4d4d; border-color: #ff4d4d; }
+  .sync-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .admin-btn { font-size: 0.68rem; padding: 5px 11px; border-radius: 100px; background: #222; border: 1px solid #2e2e2e; color: #888; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 600; -webkit-appearance: none; }
+  .admin-btn.active { color: #f1d035; border-color: #f1d035; background: #1c1a00; }
 
-header { background: #1a1a1a; border-bottom: 2px solid var(–accent); padding: 20px 20px 14px; position: sticky; top: 0; z-index: 100; }
-.header-row { display: flex; align-items: center; justify-content: space-between; }
-header h1 { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.9rem; letter-spacing: 3px; color: #c8f135; line-height: 1; }
-header p { font-size: 0.72rem; color: #888888; margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; }
-.header-btns { display: flex; gap: 8px; align-items: center; }
-
-.sync-indicator { font-size: 0.68rem; padding: 4px 9px; border-radius: 100px; background: #222222; border: 1px solid var(–border); color: #888888; display: flex; align-items: center; gap: 4px; }
-.sync-indicator.synced { color: #c8f135; border-color: #c8f135; }
-.sync-indicator.syncing { color: var(–accent2); border-color: var(–accent2); }
-.sync-indicator.error { color: var(–red); border-color: var(–red); }
-.sync-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-
-.admin-btn { font-size: 0.68rem; padding: 4px 10px; border-radius: 100px; background: #222222; border: 1px solid var(–border); color: #888888; cursor: pointer; font-family: ‘DM Sans’, sans-serif; font-weight: 500; }
-.admin-btn.active { color: var(–accent2); border-color: var(–accent2); }
-
-.week-nav { display: flex; gap: 8px; padding: 14px 20px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(–border); background: #0f0f0f; position: sticky; top: 78px; z-index: 99; }
+.week-nav { display: flex; gap: 8px; padding: 14px 20px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid #2e2e2e; background: #0f0f0f; position: sticky; top: 78px; z-index: 99; }
 .week-nav::-webkit-scrollbar { display: none; }
-.day-btn { flex-shrink: 0; background: #1a1a1a; border: 1px solid var(–border); color: #888888; padding: 7px 15px; border-radius: 100px; font-family: ‘DM Sans’, sans-serif; font-size: 0.76rem; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.day-btn.active { background: var(–accent); color: #111; border-color: #c8f135; font-weight: 600; }
-.day-btn.rest { opacity: 0.4; cursor: default; }
+.day-btn { flex-shrink: 0; background: #1a1a1a; border: 1px solid #2e2e2e; color: #888; padding: 7px 15px; border-radius: 100px; font-family: ‘DM Sans’, sans-serif; font-size: 0.76rem; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; -webkit-appearance: none; }
+.day-btn.active { background: #c8f135; color: #111; border-color: #c8f135; font-weight: 600; }
+.day-btn.rest { opacity: 0.5; }
 
 .content { padding: 16px 20px; max-width: 680px; margin: 0 auto; }
 .day-header { margin-bottom: 16px; }
 .day-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.7rem; letter-spacing: 2px; color: #f0f0f0; line-height: 1; }
-.day-subtitle { font-size: 0.75rem; color: #888888; margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; }
+.day-subtitle { font-size: 0.75rem; color: #888; margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; }
 .day-meta { font-size: 0.72rem; color: #c8f135; margin-top: 4px; }
 
-.exercise-card { background: #1a1a1a; border: 1px solid var(–border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+.admin-toolbar { background: #1c1a00; border: 1px solid #f1d035; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; display: none; flex-direction: column; gap: 8px; }
+.admin-toolbar.visible { display: flex; }
+.admin-label { font-size: 0.7rem; color: #f1d035; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.admin-btns-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.adm-btn { border: none; border-radius: 7px; padding: 6px 12px; font-family: ‘DM Sans’, sans-serif; font-size: 0.76rem; font-weight: 600; cursor: pointer; -webkit-appearance: none; }
+.adm-btn-yellow { background: #f1d035; color: #111; }
+.adm-btn-red { background: #ff4d4d; color: #fff; }
+.adm-btn-green { background: #c8f135; color: #111; }
+.adm-btn-gray { background: #333; color: #aaa; border: 1px solid #444; }
+
+.exercise-card { background: #1a1a1a; border: 1px solid #2e2e2e; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
 .exercise-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 15px; cursor: pointer; user-select: none; }
 .exercise-name { font-size: 0.88rem; font-weight: 600; color: #f0f0f0; }
-.exercise-meta { font-size: 0.7rem; color: #888888; margin-top: 2px; }
-.expand-icon { color: #888888; font-size: 1rem; transition: transform 0.2s; flex-shrink: 0; margin-left: 8px; }
+.exercise-meta { font-size: 0.7rem; color: #888; margin-top: 2px; }
+.expand-icon { color: #888; font-size: 1rem; transition: transform 0.2s; flex-shrink: 0; margin-left: 8px; }
 .exercise-card.open .expand-icon { transform: rotate(180deg); }
-.exercise-body { display: none; padding: 0 15px 14px; border-top: 1px solid var(–border); }
+.exercise-body { display: none; padding: 0 15px 14px; border-top: 1px solid #2e2e2e; }
 .exercise-card.open .exercise-body { display: block; }
-.progression-note { font-size: 0.7rem; color: #c8f135; padding: 7px 0 10px; border-bottom: 1px solid var(–border); margin-bottom: 10px; }
+.progression-note { font-size: 0.7rem; color: #c8f135; padding: 7px 0 10px; border-bottom: 1px solid #2e2e2e; margin-bottom: 10px; }
+.admin-ex-actions { display: none; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.admin-mode .admin-ex-actions { display: flex; }
 
 .col-headers { display: grid; grid-template-columns: 38px 1fr 1fr auto; gap: 7px; margin-bottom: 4px; }
-.col-h { font-size: 0.6rem; color: #888888; text-transform: uppercase; letter-spacing: 0.5px; }
+.col-h { font-size: 0.6rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
 .sets-grid { display: flex; flex-direction: column; gap: 7px; }
 .set-row { display: grid; grid-template-columns: 38px 1fr 1fr auto; gap: 7px; align-items: center; }
 .set-label { font-family: ‘Bebas Neue’, sans-serif; font-size: 1rem; color: #c8f135; letter-spacing: 1px; }
-.set-input { background: #222222; border: 1px solid var(–border); border-radius: 8px; padding: 7px 9px; color: #f0f0f0; font-family: ‘DM Sans’, sans-serif; font-size: 0.8rem; width: 100%; -webkit-appearance: none; transition: border-color 0.15s; }
+.set-input { background: #222; border: 1px solid #2e2e2e; border-radius: 8px; padding: 7px 9px; color: #f0f0f0; font-family: ‘DM Sans’, sans-serif; font-size: 0.8rem; width: 100%; -webkit-appearance: none; }
 .set-input:focus { outline: none; border-color: #c8f135; }
 .set-input::placeholder { color: #555; }
-.check-btn { width: 30px; height: 30px; border-radius: 7px; border: 2px solid var(–border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; font-size: 0.85rem; color: #111; }
-.check-btn.done { background: var(–accent); border-color: #c8f135; }
+.check-btn { width: 30px; height: 30px; border-radius: 7px; border: 2px solid #2e2e2e; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; font-size: 0.85rem; -webkit-appearance: none; }
+.check-btn.done { background: #c8f135; border-color: #c8f135; color: #111; }
+.progress-bar-wrap { height: 3px; background: #2e2e2e; border-radius: 2px; margin-top: 7px; }
+.progress-bar-fill { height: 100%; background: #c8f135; border-radius: 2px; transition: width 0.3s ease; }
 
-.progress-bar-wrap { height: 3px; background: var(–border); border-radius: 2px; margin-top: 7px; }
-.progress-bar-fill { height: 100%; background: var(–accent); border-radius: 2px; transition: width 0.3s ease; }
-
-/* Admin mode */
-.admin-toolbar { background: #1c1a00; border: 1px solid var(–accent2); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; display: none; }
-.admin-toolbar.visible { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.admin-label { font-size: 0.72rem; color: var(–accent2); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-.add-ex-btn { background: var(–accent2); color: #111; border: none; border-radius: 8px; padding: 7px 14px; font-family: ‘DM Sans’, sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; }
-
-.admin-ex-actions { display: none; gap: 6px; margin-top: 8px; }
-.admin-mode .admin-ex-actions { display: flex; }
-.del-ex-btn { background: var(–red); color: #fff; border: none; border-radius: 6px; padding: 4px 10px; font-family: ‘DM Sans’, sans-serif; font-size: 0.72rem; font-weight: 600; cursor: pointer; }
-.add-set-btn { background: #222222; color: #c8f135; border: 1px solid var(–accent); border-radius: 6px; padding: 4px 10px; font-family: ‘DM Sans’, sans-serif; font-size: 0.72rem; font-weight: 600; cursor: pointer; }
-.del-set-btn { background: #222222; color: var(–red); border: 1px solid var(–red); border-radius: 6px; padding: 4px 10px; font-family: ‘DM Sans’, sans-serif; font-size: 0.72rem; font-weight: 600; cursor: pointer; }
-
-/* Modal */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
-.modal-overlay.visible { display: flex; }
-.modal { background: #1a1a1a; border: 1px solid var(–border); border-radius: 16px; padding: 24px; width: 100%; max-width: 340px; }
-.modal h2 { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.4rem; letter-spacing: 2px; color: #c8f135; margin-bottom: 16px; }
-.modal input, .modal select { background: #222222; border: 1px solid var(–border); border-radius: 8px; padding: 10px 12px; color: #f0f0f0; font-family: ‘DM Sans’, sans-serif; font-size: 0.85rem; width: 100%; margin-bottom: 10px; -webkit-appearance: none; }
-.modal input:focus, .modal select:focus { outline: none; border-color: #c8f135; }
-.modal-btns { display: flex; gap: 8px; margin-top: 6px; }
-.modal.btn { flex: 1; padding: 11px; -webkit-appearance: none; appearance: none; border-radius: 9px; font-family: ‘DM Sans’, sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; border: none; }
-.modal.btn-primary { background: #c8f135 !important; color: #111111 !important; border: none !important; -webkit-appearance: none; appearance: none; }
-.modal.btn-ghost { background: #222222 !important; color: #888888 !important; border: 1px solid #2e2e2e !important; -webkit-appearance: none; appearance: none; }
-
-.rest-day-card { background: #1a1a1a; border: 1px solid var(–border); border-radius: 16px; padding: 40px 24px; text-align: center; }
+.rest-day-card { background: #1a1a1a; border: 1px solid #2e2e2e; border-radius: 16px; padding: 40px 24px; text-align: center; }
 .rest-icon { font-size: 2.8rem; margin-bottom: 14px; }
-.rest-day-card h2 { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.5rem; letter-spacing: 2px; color: #888888; }
+.rest-day-card h2 { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.5rem; letter-spacing: 2px; color: #888; }
 .rest-day-card p { font-size: 0.78rem; color: #555; margin-top: 6px; }
 
-.save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; border-top: 1px solid var(–border); padding: 10px 20px; display: flex; gap: 10px; z-index: 200; }
-.btn { flex: 1; padding: 11px; -webkit-appearance: none; appearance: none; border-radius: 10px; font-family: ‘DM Sans’, sans-serif; font-size: 0.83rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
-.btn-primary { background: #c8f135 !important; color: #111111 !important; border: none !important; -webkit-appearance: none; appearance: none; }
-.btn-primary:active { transform: scale(0.97); }
-.btn-ghost { background: #222222 !important; color: #888888 !important; border: 1px solid #2e2e2e !important; -webkit-appearance: none; appearance: none; }
+.save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; border-top: 1px solid #2e2e2e; padding: 10px 20px; display: flex; gap: 10px; z-index: 200; }
+.btn { flex: 1; padding: 11px; border-radius: 10px; font-family: ‘DM Sans’, sans-serif; font-size: 0.83rem; font-weight: 600; cursor: pointer; -webkit-appearance: none; appearance: none; border: none; }
+.btn-primary { background: #c8f135 !important; color: #111 !important; }
+.btn-ghost { background: #222 !important; color: #888 !important; border: 1px solid #2e2e2e !important; }
 
-.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: var(–accent); color: #111; padding: 9px 18px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; z-index: 999; transition: transform 0.3s ease; white-space: nowrap; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.visible { display: flex; }
+.modal { background: #1a1a1a; border: 1px solid #2e2e2e; border-radius: 16px; padding: 24px; width: 100%; max-width: 340px; }
+.modal h2 { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.4rem; letter-spacing: 2px; color: #c8f135; margin-bottom: 16px; }
+.modal input { background: #222; border: 1px solid #2e2e2e; border-radius: 8px; padding: 10px 12px; color: #f0f0f0; font-family: ‘DM Sans’, sans-serif; font-size: 0.85rem; width: 100%; margin-bottom: 10px; -webkit-appearance: none; }
+.modal input:focus { outline: none; border-color: #c8f135; }
+.modal-btns { display: flex; gap: 8px; margin-top: 6px; }
+.modal-btn { flex: 1; padding: 11px; border-radius: 9px; font-family: ‘DM Sans’, sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; -webkit-appearance: none; border: none; }
+.modal-btn-primary { background: #c8f135 !important; color: #111 !important; }
+.modal-btn-ghost { background: #222 !important; color: #888 !important; border: 1px solid #2e2e2e !important; }
+
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: #c8f135; color: #111; padding: 9px 18px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; z-index: 999; transition: transform 0.3s ease; white-space: nowrap; }
 .toast.show { transform: translateX(-50%) translateY(0); }
 </style>
 
@@ -120,17 +109,15 @@ header p { font-size: 0.72rem; color: #888888; margin-top: 3px; letter-spacing: 
 </header>
 
 <div class="week-nav" id="weekNav"></div>
-
 <div class="content" id="content"></div>
 
 <div class="save-bar">
   <button class="btn btn-ghost" onclick="clearDayData()">🗑 Zerar treino</button>
   <button class="btn btn-primary" onclick="saveToCloud()">☁️ Salvar na nuvem</button>
 </div>
-
 <div class="toast" id="toast"></div>
 
-<!-- Modal admin senha -->
+<!-- Modal senha admin -->
 
 <div class="modal-overlay" id="adminModal">
   <div class="modal">
@@ -149,11 +136,26 @@ header p { font-size: 0.72rem; color: #888888; margin-top: 3px; letter-spacing: 
   <div class="modal">
     <h2>Novo Exercício</h2>
     <input type="text" id="newExName" placeholder="Nome do exercício">
-    <input type="number" id="newExSets" placeholder="Número de séries" min="1" max="10">
+    <input type="number" id="newExSets" placeholder="Número de séries (ex: 3)">
     <input type="text" id="newExReps" placeholder="Reps (ex: 6-8)">
     <div class="modal-btns">
       <button class="modal-btn modal-btn-ghost" onclick="closeModal('addExModal')">Cancelar</button>
       <button class="modal-btn modal-btn-primary" onclick="confirmAddEx()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal renomear dia -->
+
+<div class="modal-overlay" id="renameModal">
+  <div class="modal">
+    <h2>Renomear Dia</h2>
+    <input type="text" id="newDayTitle" placeholder="Título (ex: Lower A)">
+    <input type="text" id="newDaySubtitle" placeholder="Subtítulo (ex: Glúteo + Perna)">
+    <input type="text" id="newDayFocus" placeholder="Foco (ex: 10 séries · 3x6-8)">
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-ghost" onclick="closeModal('renameModal')">Cancelar</button>
+      <button class="modal-btn modal-btn-primary" onclick="confirmRename()">Salvar</button>
     </div>
   </div>
 </div>
@@ -173,34 +175,19 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-window._db = db;
-window._firestoreReady = true;
-window._setDoc = setDoc;
-window._getDoc = getDoc;
-window._doc = doc;
+window._db = db; window._firestoreReady = true;
+window._setDoc = setDoc; window._getDoc = getDoc; window._doc = doc;
 
 setSyncStatus('syncing', '⏳');
-
 try {
-  // Load workout structure
   const structSnap = await getDoc(doc(db, 'treino', 'estrutura'));
-  if (structSnap.exists()) {
-    window._DAYS = structSnap.data().days;
-  }
-
-  // Load workout data (weights/reps)
+  if (structSnap.exists()) window._DAYS = structSnap.data().days;
   const dataSnap = await getDoc(doc(db, 'treino', 'dados'));
-  if (dataSnap.exists()) {
-    Object.entries(dataSnap.data()).forEach(([k, v]) => localStorage.setItem(k, v));
-  }
-
+  if (dataSnap.exists()) Object.entries(dataSnap.data()).forEach(([k,v]) => localStorage.setItem(k,v));
   setSyncStatus('synced', '☁️ OK');
-} catch(e) {
-  setSyncStatus('error', '⚠️ Offline');
-}
+} catch(e) { setSyncStatus('error', '⚠️ Offline'); }
 
-window.buildContent();
-window.buildNav();
+window.buildContent(); window.buildNav();
 </script>
 
 <script>
@@ -208,77 +195,32 @@ const ADMIN_PASS = '1234';
 let isAdmin = false;
 let activeDay = 'seg';
 
-// Default structure
 const DEFAULT_DAYS = [
-  {
-    key: 'seg', label: 'Seg', title: 'Lower A', subtitle: 'Glúteo + Perna', focus: '10 séries válidas · 3x6-8 pesado / 2x8-10',
-    exercises: [
-      { name: 'Leg press 45°', sets: 3, reps: '6-8' },
-      { name: 'Stiff / Romeno', sets: 3, reps: '6-8' },
-      { name: 'Abdutora', sets: 2, reps: '8-10' },
-      { name: 'Cadeira extensora', sets: 2, reps: '8-10' },
-    ]
-  },
-  {
-    key: 'ter', label: 'Ter', title: 'Costas + Ombro', subtitle: 'Upper A',  focus: '10 séries válidas · 3x6-8 pesado / 2x8-10',
-    exercises: [
-      { name: 'Puxada alta', sets: 3, reps: '6-8' },
-      { name: 'Remada baixa', sets: 3, reps: '6-8' },
-      { name: 'Elevação lateral', sets: 2, reps: '8-10' },
-      { name: 'Face pull', sets: 2, reps: '8-10' },
-    ]
-  },
-  {
-    key: 'qua', label: 'Qua', title: 'Folga', subtitle: '', rest: true,
-  },
-  {
-    key: 'qui', label: 'Qui', title: 'Lower B', subtitle: 'Quadríceps + Glúteo', focus: '10 séries válidas · 3x6-8 pesado / 2x8-10',
-    exercises: [
-      { name: 'Agachamento smith', sets: 3, reps: '6-8' },
-      { name: 'Leg press', sets: 3, reps: '8-10' },
-      { name: 'Afundo andando', sets: 2, reps: '8-10' },
-      { name: 'Flexora', sets: 2, reps: '8-10' },
-    ]
-  },
-  {
-    key: 'sex', label: 'Sex', title: 'Superior Fem.', subtitle: 'Upper B', focus: '10 séries válidas · 3x6-8 pesado / 2x8-10',
-    exercises: [
-      { name: 'Desenvolvimento halter', sets: 3, reps: '6-8' },
-      { name: 'Crucifixo invertido', sets: 3, reps: '8-10' },
-      { name: 'Tríceps corda', sets: 2, reps: '8-10' },
-      { name: 'Rosca martelo', sets: 2, reps: '8-10' },
-    ]
-  },
-  {
-    key: 'sab', label: 'Sáb', title: 'Lower C', subtitle: 'Glúteo + Panturrilha', focus: '10 séries válidas · 3x8-10',
-    exercises: [
-      { name: 'Passada búlgara', sets: 3, reps: '8-10' },
-      { name: 'Coice no cabo', sets: 3, reps: '8-10' },
-      { name: 'Panturrilha', sets: 2, reps: '8-10' },
-      { name: 'Flexora', sets: 2, reps: '8-10' },
-    ]
-  },
-  {
-    key: 'dom', label: 'Dom', title: 'Folga', subtitle: '', rest: true,
-  },
+  { key:'seg', label:'Seg', title:'Lower A', subtitle:'Glúteo + Perna', focus:'10 séries válidas · 3x6-8 pesado / 2x8-10',
+    exercises:[{name:'Leg press 45°',sets:3,reps:'6-8'},{name:'Stiff / Romeno',sets:3,reps:'6-8'},{name:'Abdutora',sets:2,reps:'8-10'},{name:'Cadeira extensora',sets:2,reps:'8-10'}] },
+  { key:'ter', label:'Ter', title:'Costas + Ombro', subtitle:'Upper A', focus:'10 séries válidas · 3x6-8 pesado / 2x8-10',
+    exercises:[{name:'Puxada alta',sets:3,reps:'6-8'},{name:'Remada baixa',sets:3,reps:'6-8'},{name:'Elevação lateral',sets:2,reps:'8-10'},{name:'Face pull',sets:2,reps:'8-10'}] },
+  { key:'qua', label:'Qua', title:'Lower B', subtitle:'Quadríceps + Glúteo', focus:'10 séries válidas · 3x6-8 pesado / 2x8-10',
+    exercises:[{name:'Agachamento smith',sets:3,reps:'6-8'},{name:'Leg press',sets:3,reps:'8-10'},{name:'Afundo andando',sets:2,reps:'8-10'},{name:'Flexora',sets:2,reps:'8-10'}] },
+  { key:'qui', label:'Qui', title:'Folga', subtitle:'', rest:true, exercises:[] },
+  { key:'sex', label:'Sex', title:'Superior Fem.', subtitle:'Upper B', focus:'10 séries válidas · 3x6-8 pesado / 2x8-10',
+    exercises:[{name:'Desenvolvimento halter',sets:3,reps:'6-8'},{name:'Crucifixo invertido',sets:3,reps:'8-10'},{name:'Tríceps corda',sets:2,reps:'8-10'},{name:'Rosca martelo',sets:2,reps:'8-10'}] },
+  { key:'sab', label:'Sáb', title:'Lower C', subtitle:'Glúteo + Panturrilha', focus:'10 séries válidas · 3x8-10',
+    exercises:[{name:'Passada búlgara',sets:3,reps:'8-10'},{name:'Coice no cabo',sets:3,reps:'8-10'},{name:'Panturrilha',sets:2,reps:'8-10'},{name:'Flexora',sets:2,reps:'8-10'}] },
+  { key:'dom', label:'Dom', title:'Folga', subtitle:'', rest:true, exercises:[] },
 ];
 
-function getDays() {
-  return window._DAYS || DEFAULT_DAYS;
-}
-
-function getKey(dayKey, exIdx, setIdx, field) {
-  return `pt_${dayKey}_ex${exIdx}_s${setIdx}_${field}`;
-}
-function loadVal(key) { return localStorage.getItem(key) || ''; }
-function saveVal(key, val) { localStorage.setItem(key, val); }
+function getDays() { return window._DAYS || DEFAULT_DAYS; }
+function getKey(d,e,s,f) { return `pt_${d}_ex${e}_s${s}_${f}`; }
+function loadVal(k) { return localStorage.getItem(k) || ''; }
+function saveVal(k,v) { localStorage.setItem(k,v); }
 
 function setSyncStatus(status, text) {
   const el = document.getElementById('syncIndicator');
-  const txt = document.getElementById('syncText');
+  const tx = document.getElementById('syncText');
   if (!el) return;
   el.className = 'sync-indicator ' + status;
-  txt.textContent = text;
+  tx.textContent = text;
 }
 
 window.buildNav = function() {
@@ -286,14 +228,20 @@ window.buildNav = function() {
   nav.innerHTML = '';
   getDays().forEach(d => {
     const btn = document.createElement('button');
+    // In admin mode all days are clickable; otherwise rest days are not
+    const isRest = d.rest && !isAdmin;
     btn.className = 'day-btn' + (d.rest ? ' rest' : '') + (d.key === activeDay ? ' active' : '');
     btn.textContent = d.label;
-    if (!d.rest) btn.onclick = () => switchDay(d.key);
+    btn.onclick = () => switchDay(d.key);
+    if (isRest) btn.style.cursor = 'default';
     nav.appendChild(btn);
   });
 }
 
 function switchDay(key) {
+  const days = getDays();
+  const day = days.find(d => d.key === key);
+  if (day.rest && !isAdmin) return;
   activeDay = key;
   buildNav();
   buildContent();
@@ -305,37 +253,45 @@ window.buildContent = function() {
   const day = days.find(d => d.key === activeDay) || days[0];
   container.innerHTML = '';
 
+  // Admin toolbar — always show when admin, even on rest days
+  if (isAdmin) {
+    const toolbar = document.createElement('div');
+    toolbar.className = 'admin-toolbar visible';
+    toolbar.innerHTML = `
+      <div class="admin-label">⚙️ Modo Admin — ${day.label}</div>
+      <div class="admin-btns-row">
+        <button class="adm-btn adm-btn-yellow" onclick="openRename()">✏️ Renomear</button>
+        ${day.rest
+          ? `<button class="adm-btn adm-btn-green" onclick="toggleRestDay('${day.key}')">💪 Ativar treino</button>`
+          : `<button class="adm-btn adm-btn-red" onclick="toggleRestDay('${day.key}')">🛌 Marcar folga</button>`
+        }
+        ${!day.rest ? `<button class="adm-btn adm-btn-yellow" onclick="openAddEx()">+ Exercício</button>` : ''}
+      </div>`;
+    container.appendChild(toolbar);
+  }
+
   if (day.rest) {
-    container.innerHTML = `
+    const card = document.createElement('div');
+    card.innerHTML = `
       <div class="rest-day-card">
         <div class="rest-icon">🛌</div>
         <h2>Dia de Descanso</h2>
         <p>Recuperação é parte do treino!</p>
       </div>`;
+    container.appendChild(card);
     return;
   }
 
-  // Admin toolbar
-  const toolbar = document.createElement('div');
-  toolbar.className = 'admin-toolbar' + (isAdmin ? ' visible' : '');
-  toolbar.id = 'adminToolbar';
-  toolbar.innerHTML = `<span class="admin-label">⚙️ Modo Admin — ${day.title}</span><button class="add-ex-btn" onclick="openAddEx()">+ Exercício</button>`;
-  container.appendChild(toolbar);
-
-  // Day header
   const header = document.createElement('div');
   header.className = 'day-header';
   header.innerHTML = `
     <div class="day-title">${day.title}</div>
-    <div class="day-subtitle">${day.subtitle}</div>
-    ${day.focus ? `<div class="day-meta">${day.focus}</div>` : ''}
-  `;
+    <div class="day-subtitle">${day.subtitle || ''}</div>
+    ${day.focus ? `<div class="day-meta">${day.focus}</div>` : ''}`;
   container.appendChild(header);
 
-  const exIdx_map = [];
-  day.exercises.forEach((ex, exIdx) => {
-    const card = buildExCard(day, ex, exIdx);
-    container.appendChild(card);
+  (day.exercises || []).forEach((ex, exIdx) => {
+    container.appendChild(buildExCard(day, ex, exIdx));
   });
 }
 
@@ -344,35 +300,20 @@ function buildExCard(day, ex, exIdx) {
   card.className = 'exercise-card' + (isAdmin ? ' admin-mode' : '');
   card.id = `ex-${exIdx}`;
 
-  const doneCount = Array.from({length: ex.sets}, (_, i) =>
-    loadVal(getKey(day.key, exIdx, i, 'done')) === '1').filter(Boolean).length;
+  const doneCount = Array.from({length: ex.sets}, (_,i) => loadVal(getKey(day.key,exIdx,i,'done')) === '1').filter(Boolean).length;
   const pct = Math.round((doneCount / ex.sets) * 100);
 
-  let setsHtml = `
-    <div class="col-headers">
-      <div class="col-h"></div>
-      <div class="col-h">Carga (kg)</div>
-      <div class="col-h">Reps feitas</div>
-      <div class="col-h"></div>
-    </div>
-    <div class="sets-grid">`;
-
+  let setsHtml = `<div class="col-headers"><div class="col-h"></div><div class="col-h">Carga (kg)</div><div class="col-h">Reps feitas</div><div class="col-h"></div></div><div class="sets-grid">`;
   for (let s = 0; s < ex.sets; s++) {
-    const pesoVal = loadVal(getKey(day.key, exIdx, s, 'peso'));
-    const repsVal = loadVal(getKey(day.key, exIdx, s, 'reps'));
-    const isDone = loadVal(getKey(day.key, exIdx, s, 'done')) === '1';
-    setsHtml += `
-      <div class="set-row">
-        <div class="set-label">S${s+1}</div>
-        <input class="set-input" type="number" placeholder="kg" value="${pesoVal}"
-          oninput="autoSave('${day.key}',${exIdx},${s},'peso',this.value)">
-        <input class="set-input" type="number" placeholder="${ex.reps}" value="${repsVal}"
-          oninput="autoSave('${day.key}',${exIdx},${s},'reps',this.value)">
-        <button class="check-btn ${isDone ? 'done' : ''}" id="chk-${exIdx}-${s}"
-          onclick="toggleDone('${day.key}',${exIdx},${s},${ex.sets})">
-          ${isDone ? '✓' : ''}
-        </button>
-      </div>`;
+    const pv = loadVal(getKey(day.key,exIdx,s,'peso'));
+    const rv = loadVal(getKey(day.key,exIdx,s,'reps'));
+    const done = loadVal(getKey(day.key,exIdx,s,'done')) === '1';
+    setsHtml += `<div class="set-row">
+      <div class="set-label">S${s+1}</div>
+      <input class="set-input" type="number" placeholder="kg" value="${pv}" oninput="autoSave('${day.key}',${exIdx},${s},'peso',this.value)">
+      <input class="set-input" type="number" placeholder="${ex.reps}" value="${rv}" oninput="autoSave('${day.key}',${exIdx},${s},'reps',this.value)">
+      <button class="check-btn ${done?'done':''}" id="chk-${exIdx}-${s}" onclick="toggleDone('${day.key}',${exIdx},${s},${ex.sets})">${done?'✓':''}</button>
+    </div>`;
   }
   setsHtml += '</div>';
 
@@ -387,43 +328,35 @@ function buildExCard(day, ex, exIdx) {
     </div>
     <div class="exercise-body">
       <div class="admin-ex-actions">
-        <button class="del-ex-btn" onclick="deleteEx('${day.key}',${exIdx})">🗑 Remover</button>
-        <button class="add-set-btn" onclick="addSet('${day.key}',${exIdx})">+ Série</button>
-        <button class="del-set-btn" onclick="delSet('${day.key}',${exIdx})">− Série</button>
+        <button class="adm-btn adm-btn-red" onclick="deleteEx('${day.key}',${exIdx})">🗑 Remover</button>
+        <button class="adm-btn adm-btn-green" onclick="addSet('${day.key}',${exIdx})">+ Série</button>
+        <button class="adm-btn adm-btn-gray" onclick="delSet('${day.key}',${exIdx})">− Série</button>
       </div>
       <div class="progression-note">⬆ Dupla progressão: ${ex.reps} reps → aumentar carga → repetir</div>
       ${setsHtml}
     </div>`;
-
   return card;
 }
 
-function toggleCard(exIdx) {
-  document.getElementById(`ex-${exIdx}`).classList.toggle('open');
+function toggleCard(i) { document.getElementById(`ex-${i}`).classList.toggle('open'); }
+function autoSave(d,e,s,f,v) { saveVal(getKey(d,e,s,f),v); }
+
+function toggleDone(dk, ei, si, total) {
+  const k = getKey(dk,ei,si,'done');
+  const cur = loadVal(k) === '1';
+  saveVal(k, cur ? '0' : '1');
+  const btn = document.getElementById(`chk-${ei}-${si}`);
+  btn.classList.toggle('done', !cur);
+  btn.textContent = !cur ? '✓' : '';
+  const done = Array.from({length:total},(_,i) => loadVal(getKey(dk,ei,i,'done')) === '1').filter(Boolean).length;
+  document.getElementById(`prog-${ei}`).style.width = Math.round(done/total*100) + '%';
 }
 
-function autoSave(dayKey, exIdx, setIdx, field, val) {
-  saveVal(getKey(dayKey, exIdx, setIdx, field), val);
-}
-
-function toggleDone(dayKey, exIdx, setIdx, totalSets) {
-  const key = getKey(dayKey, exIdx, setIdx, 'done');
-  const current = loadVal(key) === '1';
-  saveVal(key, current ? '0' : '1');
-  const btn = document.getElementById(`chk-${exIdx}-${setIdx}`);
-  btn.classList.toggle('done', !current);
-  btn.textContent = !current ? '✓' : '';
-  const doneCount = Array.from({length: totalSets}, (_, i) =>
-    loadVal(getKey(dayKey, exIdx, i, 'done')) === '1').filter(Boolean).length;
-  document.getElementById(`prog-${exIdx}`).style.width = Math.round((doneCount / totalSets) * 100) + '%';
-}
-
-// Admin
 function toggleAdmin() {
   if (isAdmin) {
     isAdmin = false;
     document.getElementById('adminBtn').classList.remove('active');
-    buildContent();
+    buildNav(); buildContent();
     showToast('Admin desativado');
   } else {
     document.getElementById('adminModal').classList.add('visible');
@@ -438,12 +371,45 @@ function checkAdmin() {
     document.getElementById('adminBtn').classList.add('active');
     closeModal('adminModal');
     document.getElementById('adminPass').value = '';
-    buildContent();
+    buildNav(); buildContent();
     showToast('✅ Modo admin ativado');
   } else {
     showToast('❌ Senha errada');
     document.getElementById('adminPass').value = '';
   }
+}
+
+function toggleRestDay(dayKey) {
+  const days = getDays();
+  const day = days.find(d => d.key === dayKey);
+  day.rest = !day.rest;
+  if (day.rest) { day.title = 'Folga'; day.subtitle = ''; day.focus = ''; }
+  else { day.title = day.label + ' — Treino'; day.subtitle = ''; if (!day.exercises) day.exercises = []; }
+  window._DAYS = days;
+  buildNav(); buildContent();
+  showToast(day.rest ? '🛌 Marcado como folga' : '💪 Marcado como treino');
+}
+
+function openRename() {
+  const days = getDays();
+  const day = days.find(d => d.key === activeDay);
+  document.getElementById('newDayTitle').value = day.title || '';
+  document.getElementById('newDaySubtitle').value = day.subtitle || '';
+  document.getElementById('newDayFocus').value = day.focus || '';
+  document.getElementById('renameModal').classList.add('visible');
+  setTimeout(() => document.getElementById('newDayTitle').focus(), 100);
+}
+
+function confirmRename() {
+  const days = getDays();
+  const day = days.find(d => d.key === activeDay);
+  day.title = document.getElementById('newDayTitle').value.trim() || day.title;
+  day.subtitle = document.getElementById('newDaySubtitle').value.trim();
+  day.focus = document.getElementById('newDayFocus').value.trim();
+  window._DAYS = days;
+  closeModal('renameModal');
+  buildContent();
+  showToast('✅ Dia renomeado');
 }
 
 function openAddEx() {
@@ -456,125 +422,83 @@ function confirmAddEx() {
   const sets = parseInt(document.getElementById('newExSets').value) || 3;
   const reps = document.getElementById('newExReps').value.trim() || '8-10';
   if (!name) { showToast('⚠️ Digite o nome'); return; }
-
   const days = getDays();
   const day = days.find(d => d.key === activeDay);
   if (!day.exercises) day.exercises = [];
-  day.exercises.push({ name, sets, reps });
+  day.exercises.push({name, sets, reps});
   window._DAYS = days;
-
   closeModal('addExModal');
-  document.getElementById('newExName').value = '';
-  document.getElementById('newExSets').value = '';
-  document.getElementById('newExReps').value = '';
+  ['newExName','newExSets','newExReps'].forEach(id => document.getElementById(id).value = '');
   buildContent();
   showToast('✅ Exercício adicionado');
 }
 
-function deleteEx(dayKey, exIdx) {
+function deleteEx(dk, ei) {
   if (!confirm('Remover esse exercício?')) return;
   const days = getDays();
-  const day = days.find(d => d.key === dayKey);
-  day.exercises.splice(exIdx, 1);
+  days.find(d => d.key === dk).exercises.splice(ei, 1);
   window._DAYS = days;
   buildContent();
   showToast('🗑 Removido');
 }
 
-function addSet(dayKey, exIdx) {
+function addSet(dk, ei) {
   const days = getDays();
-  const day = days.find(d => d.key === dayKey);
-  day.exercises[exIdx].sets++;
+  days.find(d => d.key === dk).exercises[ei].sets++;
   window._DAYS = days;
   buildContent();
-  // reopen card
-  setTimeout(() => {
-    const card = document.getElementById(`ex-${exIdx}`);
-    if (card) card.classList.add('open');
-  }, 50);
+  setTimeout(() => { const c = document.getElementById(`ex-${ei}`); if(c) c.classList.add('open'); }, 50);
 }
 
-function delSet(dayKey, exIdx) {
+function delSet(dk, ei) {
   const days = getDays();
-  const day = days.find(d => d.key === dayKey);
-  if (day.exercises[exIdx].sets > 1) {
-    day.exercises[exIdx].sets--;
-    window._DAYS = days;
-    buildContent();
-    setTimeout(() => {
-      const card = document.getElementById(`ex-${exIdx}`);
-      if (card) card.classList.add('open');
-    }, 50);
-  }
+  const ex = days.find(d => d.key === dk).exercises[ei];
+  if (ex.sets > 1) { ex.sets--; window._DAYS = days; buildContent();
+    setTimeout(() => { const c = document.getElementById(`ex-${ei}`); if(c) c.classList.add('open'); }, 50); }
 }
 
-function closeModal(id) {
-  document.getElementById(id).classList.remove('visible');
-}
+function closeModal(id) { document.getElementById(id).classList.remove('visible'); }
 
-// Save
 async function saveToCloud() {
   if (!window._firestoreReady) { showToast('⚠️ Sem conexão'); return; }
   setSyncStatus('syncing', '⏳');
   try {
-    // Save workout data (weights/reps only)
     const allData = {};
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
       if (k.startsWith('pt_')) allData[k] = localStorage.getItem(k);
     }
     await window._setDoc(window._doc(window._db, 'treino', 'dados'), allData);
-
-    // Save structure if admin changed it
-    if (window._DAYS) {
-      await window._setDoc(window._doc(window._db, 'treino', 'estrutura'), { days: window._DAYS });
-    }
-
+    if (window._DAYS) await window._setDoc(window._doc(window._db, 'treino', 'estrutura'), { days: window._DAYS });
     setSyncStatus('synced', '☁️ OK');
     showToast('✅ Salvo na nuvem!');
-  } catch(e) {
-    setSyncStatus('error', '⚠️ Erro');
-    showToast('❌ Erro ao salvar');
-  }
+  } catch(e) { setSyncStatus('error', '⚠️ Erro'); showToast('❌ Erro ao salvar'); }
 }
 
 function clearDayData() {
-  const days = getDays();
-  const day = days.find(d => d.key === activeDay);
-  if (!day || !day.exercises) return;
+  const day = getDays().find(d => d.key === activeDay);
+  if (!day || !day.exercises || day.exercises.length === 0) return;
   if (!confirm('Zerar pesos e reps de hoje? Os exercícios não serão apagados.')) return;
-  day.exercises.forEach((ex, exIdx) => {
-    for (let s = 0; s < ex.sets; s++) {
-      ['peso','reps','done'].forEach(f => localStorage.removeItem(getKey(day.key, exIdx, s, f)));
-    }
+  day.exercises.forEach((ex, ei) => {
+    for (let s = 0; s < ex.sets; s++) ['peso','reps','done'].forEach(f => localStorage.removeItem(getKey(day.key,ei,s,f)));
   });
-  buildContent();
-  showToast('🗑 Treino zerado!');
+  buildContent(); showToast('🗑 Treino zerado!');
 }
 
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-window.toggleAdmin = toggleAdmin;
-window.checkAdmin = checkAdmin;
-window.openAddEx = openAddEx;
-window.confirmAddEx = confirmAddEx;
-window.deleteEx = deleteEx;
-window.addSet = addSet;
-window.delSet = delSet;
-window.closeModal = closeModal;
-window.saveToCloud = saveToCloud;
-window.clearDayData = clearDayData;
-window.toggleCard = toggleCard;
-window.autoSave = autoSave;
-window.toggleDone = toggleDone;
+window.toggleAdmin = toggleAdmin; window.checkAdmin = checkAdmin;
+window.toggleRestDay = toggleRestDay; window.openRename = openRename; window.confirmRename = confirmRename;
+window.openAddEx = openAddEx; window.confirmAddEx = confirmAddEx;
+window.deleteEx = deleteEx; window.addSet = addSet; window.delSet = delSet;
+window.closeModal = closeModal; window.saveToCloud = saveToCloud; window.clearDayData = clearDayData;
+window.toggleCard = toggleCard; window.autoSave = autoSave; window.toggleDone = toggleDone;
 
-buildNav();
-buildContent();
+buildNav(); buildContent();
 </script>
 
 </body>
