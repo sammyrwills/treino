@@ -8,94 +8,155 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f0f0f;
-    --surface: #1a1a1a;
-    --surface2: #222222;
-    --border: #2e2e2e;
-    --accent: #c8f135;
-    --accent2: #f1d035;
-    --text: #f0f0f0;
-    --muted: #888;
-    --red: #ff4d4d;
+    --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #222;
+    --border: #2e2e2e; --accent: #c8f135; --accent2: #f1d035;
+    --text: #f0f0f0; --muted: #888; --red: #ff4d4d;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; padding: 0 0 60px; }
-  header { background: var(--surface); border-bottom: 2px solid var(--accent); padding: 24px 20px 18px; position: sticky; top: 0; z-index: 100; }
-  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; color: var(--accent); line-height: 1; }
-  .header-row { display: flex; align-items: center; justify-content: space-between; }
-  header p { font-size: 0.75rem; color: var(--muted); margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
-  .sync-indicator { font-size: 0.7rem; padding: 4px 10px; border-radius: 100px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
-  .sync-indicator.synced { color: var(--accent); border-color: var(--accent); }
-  .sync-indicator.syncing { color: var(--accent2); border-color: var(--accent2); }
-  .sync-indicator.error { color: var(--red); border-color: var(--red); }
-  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-  .week-nav { display: flex; gap: 8px; padding: 16px 20px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 85px; z-index: 99; }
-  .week-nav::-webkit-scrollbar { display: none; }
-  .day-btn { flex-shrink: 0; background: var(--surface); border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-  .day-btn.active { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 600; }
-  .day-btn.rest { opacity: 0.45; cursor: default; }
-  .content { padding: 20px; max-width: 680px; margin: 0 auto; }
-  .day-header { margin-bottom: 20px; }
-  .day-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; color: var(--text); line-height: 1; }
-  .day-subtitle { font-size: 0.78rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
-  .bike-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; padding: 4px 12px; font-size: 0.72rem; color: var(--accent2); margin-top: 10px; font-weight: 500; }
-  .exercise-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; transition: border-color 0.2s; }
-  .exercise-card:hover { border-color: #3a3a3a; }
-  .exercise-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; user-select: none; }
-  .exercise-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
-  .exercise-meta { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
-  .expand-icon { color: var(--muted); font-size: 1.1rem; transition: transform 0.2s; flex-shrink: 0; margin-left: 10px; }
-  .exercise-card.open .expand-icon { transform: rotate(180deg); }
-  .exercise-body { display: none; padding: 0 16px 16px; border-top: 1px solid var(--border); }
-  .exercise-card.open .exercise-body { display: block; }
-  .progression-note { font-size: 0.72rem; color: var(--accent); padding: 8px 0 12px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
-  .sets-grid { display: flex; flex-direction: column; gap: 8px; }
-  .set-row { display: grid; grid-template-columns: 40px 1fr 1fr auto; gap: 8px; align-items: center; }
-  .set-label { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--accent); letter-spacing: 1px; }
-  .set-input { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.82rem; width: 100%; transition: border-color 0.15s; -webkit-appearance: none; }
-  .set-input:focus { outline: none; border-color: var(--accent); }
-  .set-input::placeholder { color: #555; }
-  .check-btn { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; font-size: 0.9rem; }
-  .check-btn.done { background: var(--accent); border-color: var(--accent); }
-  .col-headers { display: grid; grid-template-columns: 40px 1fr 1fr auto; gap: 8px; margin-bottom: 4px; }
-  .col-h { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-  .rest-day-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 48px 24px; text-align: center; }
-  .rest-icon { font-size: 3rem; margin-bottom: 16px; }
-  .rest-day-card h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: var(--muted); }
-  .rest-day-card p { font-size: 0.8rem; color: #555; margin-top: 8px; }
-  .save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 12px 20px; display: flex; gap: 10px; z-index: 200; }
-  .btn { flex: 1; padding: 12px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
-  .btn-primary { background: var(--accent); color: #111; }
-  .btn-primary:active { transform: scale(0.97); }
-  .btn-ghost { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
-  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: var(--accent); color: #111; padding: 10px 20px; border-radius: 100px; font-size: 0.82rem; font-weight: 600; z-index: 999; transition: transform 0.3s ease; white-space: nowrap; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .progress-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 8px; }
-  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s ease; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; padding: 0 0 70px; }
+
+header { background: var(–surface); border-bottom: 2px solid var(–accent); padding: 20px 20px 14px; position: sticky; top: 0; z-index: 100; }
+.header-row { display: flex; align-items: center; justify-content: space-between; }
+header h1 { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.9rem; letter-spacing: 3px; color: var(–accent); line-height: 1; }
+header p { font-size: 0.72rem; color: var(–muted); margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; }
+.header-btns { display: flex; gap: 8px; align-items: center; }
+
+.sync-indicator { font-size: 0.68rem; padding: 4px 9px; border-radius: 100px; background: var(–surface2); border: 1px solid var(–border); color: var(–muted); display: flex; align-items: center; gap: 4px; }
+.sync-indicator.synced { color: var(–accent); border-color: var(–accent); }
+.sync-indicator.syncing { color: var(–accent2); border-color: var(–accent2); }
+.sync-indicator.error { color: var(–red); border-color: var(–red); }
+.sync-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+.admin-btn { font-size: 0.68rem; padding: 4px 10px; border-radius: 100px; background: var(–surface2); border: 1px solid var(–border); color: var(–muted); cursor: pointer; font-family: ‘DM Sans’, sans-serif; font-weight: 500; }
+.admin-btn.active { color: var(–accent2); border-color: var(–accent2); }
+
+.week-nav { display: flex; gap: 8px; padding: 14px 20px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(–border); background: var(–bg); position: sticky; top: 78px; z-index: 99; }
+.week-nav::-webkit-scrollbar { display: none; }
+.day-btn { flex-shrink: 0; background: var(–surface); border: 1px solid var(–border); color: var(–muted); padding: 7px 15px; border-radius: 100px; font-family: ‘DM Sans’, sans-serif; font-size: 0.76rem; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.day-btn.active { background: var(–accent); color: #111; border-color: var(–accent); font-weight: 600; }
+.day-btn.rest { opacity: 0.4; cursor: default; }
+
+.content { padding: 16px 20px; max-width: 680px; margin: 0 auto; }
+.day-header { margin-bottom: 16px; }
+.day-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.7rem; letter-spacing: 2px; color: var(–text); line-height: 1; }
+.day-subtitle { font-size: 0.75rem; color: var(–muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; }
+.day-meta { font-size: 0.72rem; color: var(–accent); margin-top: 4px; }
+
+.exercise-card { background: var(–surface); border: 1px solid var(–border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+.exercise-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 15px; cursor: pointer; user-select: none; }
+.exercise-name { font-size: 0.88rem; font-weight: 600; color: var(–text); }
+.exercise-meta { font-size: 0.7rem; color: var(–muted); margin-top: 2px; }
+.expand-icon { color: var(–muted); font-size: 1rem; transition: transform 0.2s; flex-shrink: 0; margin-left: 8px; }
+.exercise-card.open .expand-icon { transform: rotate(180deg); }
+.exercise-body { display: none; padding: 0 15px 14px; border-top: 1px solid var(–border); }
+.exercise-card.open .exercise-body { display: block; }
+.progression-note { font-size: 0.7rem; color: var(–accent); padding: 7px 0 10px; border-bottom: 1px solid var(–border); margin-bottom: 10px; }
+
+.col-headers { display: grid; grid-template-columns: 38px 1fr 1fr auto; gap: 7px; margin-bottom: 4px; }
+.col-h { font-size: 0.6rem; color: var(–muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.sets-grid { display: flex; flex-direction: column; gap: 7px; }
+.set-row { display: grid; grid-template-columns: 38px 1fr 1fr auto; gap: 7px; align-items: center; }
+.set-label { font-family: ‘Bebas Neue’, sans-serif; font-size: 1rem; color: var(–accent); letter-spacing: 1px; }
+.set-input { background: var(–surface2); border: 1px solid var(–border); border-radius: 8px; padding: 7px 9px; color: var(–text); font-family: ‘DM Sans’, sans-serif; font-size: 0.8rem; width: 100%; -webkit-appearance: none; transition: border-color 0.15s; }
+.set-input:focus { outline: none; border-color: var(–accent); }
+.set-input::placeholder { color: #555; }
+.check-btn { width: 30px; height: 30px; border-radius: 7px; border: 2px solid var(–border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; font-size: 0.85rem; color: #111; }
+.check-btn.done { background: var(–accent); border-color: var(–accent); }
+
+.progress-bar-wrap { height: 3px; background: var(–border); border-radius: 2px; margin-top: 7px; }
+.progress-bar-fill { height: 100%; background: var(–accent); border-radius: 2px; transition: width 0.3s ease; }
+
+/* Admin mode */
+.admin-toolbar { background: #1c1a00; border: 1px solid var(–accent2); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; display: none; }
+.admin-toolbar.visible { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.admin-label { font-size: 0.72rem; color: var(–accent2); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.add-ex-btn { background: var(–accent2); color: #111; border: none; border-radius: 8px; padding: 7px 14px; font-family: ‘DM Sans’, sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; }
+
+.admin-ex-actions { display: none; gap: 6px; margin-top: 8px; }
+.admin-mode .admin-ex-actions { display: flex; }
+.del-ex-btn { background: var(–red); color: #fff; border: none; border-radius: 6px; padding: 4px 10px; font-family: ‘DM Sans’, sans-serif; font-size: 0.72rem; font-weight: 600; cursor: pointer; }
+.add-set-btn { background: var(–surface2); color: var(–accent); border: 1px solid var(–accent); border-radius: 6px; padding: 4px 10px; font-family: ‘DM Sans’, sans-serif; font-size: 0.72rem; font-weight: 600; cursor: pointer; }
+.del-set-btn { background: var(–surface2); color: var(–red); border: 1px solid var(–red); border-radius: 6px; padding: 4px 10px; font-family: ‘DM Sans’, sans-serif; font-size: 0.72rem; font-weight: 600; cursor: pointer; }
+
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.visible { display: flex; }
+.modal { background: var(–surface); border: 1px solid var(–border); border-radius: 16px; padding: 24px; width: 100%; max-width: 340px; }
+.modal h2 { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.4rem; letter-spacing: 2px; color: var(–accent); margin-bottom: 16px; }
+.modal input, .modal select { background: var(–surface2); border: 1px solid var(–border); border-radius: 8px; padding: 10px 12px; color: var(–text); font-family: ‘DM Sans’, sans-serif; font-size: 0.85rem; width: 100%; margin-bottom: 10px; -webkit-appearance: none; }
+.modal input:focus, .modal select:focus { outline: none; border-color: var(–accent); }
+.modal-btns { display: flex; gap: 8px; margin-top: 6px; }
+.modal-btn { flex: 1; padding: 11px; border-radius: 9px; font-family: ‘DM Sans’, sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; border: none; }
+.modal-btn-primary { background: var(–accent); color: #111; }
+.modal-btn-ghost { background: var(–surface2); color: var(–muted); border: 1px solid var(–border); }
+
+.rest-day-card { background: var(–surface); border: 1px solid var(–border); border-radius: 16px; padding: 40px 24px; text-align: center; }
+.rest-icon { font-size: 2.8rem; margin-bottom: 14px; }
+.rest-day-card h2 { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.5rem; letter-spacing: 2px; color: var(–muted); }
+.rest-day-card p { font-size: 0.78rem; color: #555; margin-top: 6px; }
+
+.save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(–surface); border-top: 1px solid var(–border); padding: 10px 20px; display: flex; gap: 10px; z-index: 200; }
+.btn { flex: 1; padding: 11px; border-radius: 10px; font-family: ‘DM Sans’, sans-serif; font-size: 0.83rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+.btn-primary { background: var(–accent); color: #111; }
+.btn-primary:active { transform: scale(0.97); }
+.btn-ghost { background: var(–surface2); color: var(–muted); border: 1px solid var(–border); }
+
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: var(–accent); color: #111; padding: 9px 18px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; z-index: 999; transition: transform 0.3s ease; white-space: nowrap; }
+.toast.show { transform: translateX(-50%) translateY(0); }
 </style>
+
 </head>
 <body>
 
 <header>
   <div class="header-row">
     <h1>🏋️ Treino</h1>
-    <div class="sync-indicator" id="syncIndicator">
-      <div class="sync-dot"></div>
-      <span id="syncText">Conectando...</span>
+    <div class="header-btns">
+      <div class="sync-indicator" id="syncIndicator"><div class="sync-dot"></div><span id="syncText">...</span></div>
+      <button class="admin-btn" id="adminBtn" onclick="toggleAdmin()">⚙️ Admin</button>
     </div>
   </div>
-  <p>Ganho de Massa · Low Volume com Progressão</p>
+  <p>Upper/Lower Feminino · Low Volume Forte</p>
 </header>
 
 <div class="week-nav" id="weekNav"></div>
+
 <div class="content" id="content"></div>
 
 <div class="save-bar">
-  <button class="btn btn-ghost" onclick="clearDay()">Limpar dia</button>
+  <button class="btn btn-ghost" onclick="clearDayData()">🗑 Zerar treino</button>
   <button class="btn btn-primary" onclick="saveToCloud()">☁️ Salvar na nuvem</button>
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Modal admin senha -->
+
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <h2>Modo Admin</h2>
+    <input type="password" id="adminPass" placeholder="Senha" onkeydown="if(event.key==='Enter')checkAdmin()">
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-ghost" onclick="closeModal('adminModal')">Cancelar</button>
+      <button class="modal-btn modal-btn-primary" onclick="checkAdmin()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal adicionar exercício -->
+
+<div class="modal-overlay" id="addExModal">
+  <div class="modal">
+    <h2>Novo Exercício</h2>
+    <input type="text" id="newExName" placeholder="Nome do exercício">
+    <input type="number" id="newExSets" placeholder="Número de séries" min="1" max="10">
+    <input type="text" id="newExReps" placeholder="Reps (ex: 6-8)">
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-ghost" onclick="closeModal('addExModal')">Cancelar</button>
+      <button class="modal-btn modal-btn-primary" onclick="confirmAddEx()">Adicionar</button>
+    </div>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -112,12 +173,105 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 window._db = db;
 window._firestoreReady = true;
 window._setDoc = setDoc;
 window._getDoc = getDoc;
 window._doc = doc;
+
+setSyncStatus('syncing', '⏳');
+
+try {
+  // Load workout structure
+  const structSnap = await getDoc(doc(db, 'treino', 'estrutura'));
+  if (structSnap.exists()) {
+    window._DAYS = structSnap.data().days;
+  }
+
+  // Load workout data (weights/reps)
+  const dataSnap = await getDoc(doc(db, 'treino', 'dados'));
+  if (dataSnap.exists()) {
+    Object.entries(dataSnap.data()).forEach(([k, v]) => localStorage.setItem(k, v));
+  }
+
+  setSyncStatus('synced', '☁️ OK');
+} catch(e) {
+  setSyncStatus('error', '⚠️ Offline');
+}
+
+window.buildContent();
+window.buildNav();
+</script>
+
+<script>
+const ADMIN_PASS = '1234';
+let isAdmin = false;
+let activeDay = 'seg';
+
+// Default structure
+const DEFAULT_DAYS = [
+  {
+    key: 'seg', label: 'Seg', title: 'Lower A', subtitle: 'Glúteo + Perna', focus: '10 séries válidas · 3x6-8 pesado / 2x8-10',
+    exercises: [
+      { name: 'Leg press 45°', sets: 3, reps: '6-8' },
+      { name: 'Stiff / Romeno', sets: 3, reps: '6-8' },
+      { name: 'Abdutora', sets: 2, reps: '8-10' },
+      { name: 'Cadeira extensora', sets: 2, reps: '8-10' },
+    ]
+  },
+  {
+    key: 'ter', label: 'Ter', title: 'Costas + Ombro', subtitle: 'Upper A',  focus: '10 séries válidas · 3x6-8 pesado / 2x8-10',
+    exercises: [
+      { name: 'Puxada alta', sets: 3, reps: '6-8' },
+      { name: 'Remada baixa', sets: 3, reps: '6-8' },
+      { name: 'Elevação lateral', sets: 2, reps: '8-10' },
+      { name: 'Face pull', sets: 2, reps: '8-10' },
+    ]
+  },
+  {
+    key: 'qua', label: 'Qua', title: 'Folga', subtitle: '', rest: true,
+  },
+  {
+    key: 'qui', label: 'Qui', title: 'Lower B', subtitle: 'Quadríceps + Glúteo', focus: '10 séries válidas · 3x6-8 pesado / 2x8-10',
+    exercises: [
+      { name: 'Agachamento smith', sets: 3, reps: '6-8' },
+      { name: 'Leg press', sets: 3, reps: '8-10' },
+      { name: 'Afundo andando', sets: 2, reps: '8-10' },
+      { name: 'Flexora', sets: 2, reps: '8-10' },
+    ]
+  },
+  {
+    key: 'sex', label: 'Sex', title: 'Superior Fem.', subtitle: 'Upper B', focus: '10 séries válidas · 3x6-8 pesado / 2x8-10',
+    exercises: [
+      { name: 'Desenvolvimento halter', sets: 3, reps: '6-8' },
+      { name: 'Crucifixo invertido', sets: 3, reps: '8-10' },
+      { name: 'Tríceps corda', sets: 2, reps: '8-10' },
+      { name: 'Rosca martelo', sets: 2, reps: '8-10' },
+    ]
+  },
+  {
+    key: 'sab', label: 'Sáb', title: 'Lower C', subtitle: 'Glúteo + Panturrilha', focus: '10 séries válidas · 3x8-10',
+    exercises: [
+      { name: 'Passada búlgara', sets: 3, reps: '8-10' },
+      { name: 'Coice no cabo', sets: 3, reps: '8-10' },
+      { name: 'Panturrilha', sets: 2, reps: '8-10' },
+      { name: 'Flexora', sets: 2, reps: '8-10' },
+    ]
+  },
+  {
+    key: 'dom', label: 'Dom', title: 'Folga', subtitle: '', rest: true,
+  },
+];
+
+function getDays() {
+  return window._DAYS || DEFAULT_DAYS;
+}
+
+function getKey(dayKey, exIdx, setIdx, field) {
+  return `pt_${dayKey}_ex${exIdx}_s${setIdx}_${field}`;
+}
+function loadVal(key) { return localStorage.getItem(key) || ''; }
+function saveVal(key, val) { localStorage.setItem(key, val); }
 
 function setSyncStatus(status, text) {
   const el = document.getElementById('syncIndicator');
@@ -127,93 +281,10 @@ function setSyncStatus(status, text) {
   txt.textContent = text;
 }
 
-setSyncStatus('syncing', '⏳ Carregando...');
-
-try {
-  const snap = await getDoc(doc(db, 'treino', 'dados'));
-  if (snap.exists()) {
-    const data = snap.data();
-    Object.entries(data).forEach(([k, v]) => localStorage.setItem(k, v));
-    setSyncStatus('synced', '☁️ Sincronizado');
-  } else {
-    setSyncStatus('synced', '☁️ Conectado');
-  }
-} catch(e) {
-  setSyncStatus('error', '⚠️ Sem conexão');
-}
-
-window.buildContent();
-</script>
-
-<script>
-const DAYS = [
-  {
-    key: 'seg', label: 'Seg', title: 'Lower A', subtitle: 'Glúteo + Posterior + Quad', bike: true,
-    exercises: [
-      { name: 'Hip thrust com barra', sets: 3, reps: '12' },
-      { name: 'Stiff com barra', sets: 3, reps: '12' },
-      { name: 'Leg curl (flexora)', sets: 3, reps: '12' },
-      { name: 'Abdução no cabo', sets: 3, reps: '12' },
-      { name: 'Elevação pélvica unilateral', sets: 3, reps: '12 cada' },
-    ]
-  },
-  {
-    key: 'ter', label: 'Ter', title: 'Upper A', subtitle: 'Costas + Bíceps', bike: false,
-    exercises: [
-      { name: 'Puxada frontal', sets: 3, reps: '12' },
-      { name: 'Remada curvada com barra', sets: 3, reps: '12' },
-      { name: 'Remada unilateral com haltere', sets: 3, reps: '12 cada' },
-      { name: 'Rosca direta', sets: 3, reps: '12' },
-      { name: 'Rosca martelo', sets: 3, reps: '12' },
-    ]
-  },
-  {
-    key: 'qua', label: 'Qua', title: 'Lower B', subtitle: 'Quadríceps + Glúteo', bike: true,
-    exercises: [
-      { name: 'Agachamento livre', sets: 3, reps: '12' },
-      { name: 'Leg press 45°', sets: 3, reps: '12' },
-      { name: 'Avanço com halteres', sets: 3, reps: '12 cada' },
-      { name: 'Cadeira extensora', sets: 3, reps: '12' },
-      { name: 'Agachamento sumô com haltere', sets: 3, reps: '12' },
-    ]
-  },
-  { key: 'qui', label: 'Qui', title: 'Folga', subtitle: '', rest: true },
-  {
-    key: 'sex', label: 'Sex', title: 'Upper B', subtitle: 'Peito + Ombro + Tríceps', bike: true,
-    exercises: [
-      { name: 'Supino com halteres', sets: 3, reps: '12' },
-      { name: 'Desenvolvimento com halteres', sets: 3, reps: '12' },
-      { name: 'Elevação lateral', sets: 3, reps: '12' },
-      { name: 'Tríceps corda no cabo', sets: 3, reps: '12' },
-      { name: 'Crucifixo com halteres', sets: 3, reps: '12' },
-    ]
-  },
-  {
-    key: 'sab', label: 'Sáb', title: 'Full Body Leve', subtitle: '', bike: false,
-    exercises: [
-      { name: 'Hip thrust com barra', sets: 3, reps: '12' },
-      { name: 'Puxada frontal', sets: 3, reps: '12' },
-      { name: 'Supino com halteres', sets: 3, reps: '12' },
-      { name: 'Elevação lateral', sets: 3, reps: '12' },
-      { name: 'Remada unilateral com haltere', sets: 3, reps: '12 cada' },
-    ]
-  },
-  { key: 'dom', label: 'Dom', title: 'Folga', subtitle: '', rest: true, bike: true },
-];
-
-let activeDay = 'seg';
-
-function getKey(dayKey, exIdx, setIdx, field) {
-  return `pt_${dayKey}_ex${exIdx}_s${setIdx}_${field}`;
-}
-
-function loadVal(key) { return localStorage.getItem(key) || ''; }
-function saveVal(key, val) { localStorage.setItem(key, val); }
-
-function buildNav() {
+window.buildNav = function() {
   const nav = document.getElementById('weekNav');
   nav.innerHTML = '';
-  DAYS.forEach(d => {
+  getDays().forEach(d => {
     const btn = document.createElement('button');
     btn.className = 'day-btn' + (d.rest ? ' rest' : '') + (d.key === activeDay ? ' active' : '');
     btn.textContent = d.label;
@@ -230,85 +301,101 @@ function switchDay(key) {
 
 window.buildContent = function() {
   const container = document.getElementById('content');
-  const day = DAYS.find(d => d.key === activeDay);
+  const days = getDays();
+  const day = days.find(d => d.key === activeDay) || days[0];
   container.innerHTML = '';
 
   if (day.rest) {
     container.innerHTML = `
-      <div class="day-header">
-        <div class="day-title">${day.title}</div>
-        ${day.bike ? '<span class="bike-badge">🚴 Bike hoje</span>' : ''}
-      </div>
       <div class="rest-day-card">
         <div class="rest-icon">🛌</div>
         <h2>Dia de Descanso</h2>
-        <p>Recuperação é parte do treino. Descansa!</p>
+        <p>Recuperação é parte do treino!</p>
       </div>`;
     return;
   }
 
+  // Admin toolbar
+  const toolbar = document.createElement('div');
+  toolbar.className = 'admin-toolbar' + (isAdmin ? ' visible' : '');
+  toolbar.id = 'adminToolbar';
+  toolbar.innerHTML = `<span class="admin-label">⚙️ Modo Admin — ${day.title}</span><button class="add-ex-btn" onclick="openAddEx()">+ Exercício</button>`;
+  container.appendChild(toolbar);
+
+  // Day header
   const header = document.createElement('div');
   header.className = 'day-header';
   header.innerHTML = `
     <div class="day-title">${day.title}</div>
     <div class="day-subtitle">${day.subtitle}</div>
-    ${day.bike ? '<span class="bike-badge">🚴 Bike após academia</span>' : ''}
+    ${day.focus ? `<div class="day-meta">${day.focus}</div>` : ''}
   `;
   container.appendChild(header);
 
+  const exIdx_map = [];
   day.exercises.forEach((ex, exIdx) => {
-    const card = document.createElement('div');
-    card.className = 'exercise-card';
-    card.id = `ex-${exIdx}`;
-
-    const doneCount = Array.from({length: ex.sets}, (_, i) =>
-      loadVal(getKey(day.key, exIdx, i, 'done')) === '1').filter(Boolean).length;
-    const pct = Math.round((doneCount / ex.sets) * 100);
-
-    let setsHtml = `
-      <div class="col-headers">
-        <div class="col-h"></div>
-        <div class="col-h">Carga (kg)</div>
-        <div class="col-h">Reps feitas</div>
-        <div class="col-h"></div>
-      </div>
-      <div class="sets-grid">`;
-
-    for (let s = 0; s < ex.sets; s++) {
-      const pesoVal = loadVal(getKey(day.key, exIdx, s, 'peso'));
-      const repsVal = loadVal(getKey(day.key, exIdx, s, 'reps'));
-      const isDone = loadVal(getKey(day.key, exIdx, s, 'done')) === '1';
-      setsHtml += `
-        <div class="set-row">
-          <div class="set-label">S${s+1}</div>
-          <input class="set-input" type="number" placeholder="kg" value="${pesoVal}"
-            oninput="autoSave('${day.key}',${exIdx},${s},'peso',this.value)">
-          <input class="set-input" type="number" placeholder="${ex.reps}" value="${repsVal}"
-            oninput="autoSave('${day.key}',${exIdx},${s},'reps',this.value)">
-          <button class="check-btn ${isDone ? 'done' : ''}" id="chk-${exIdx}-${s}"
-            onclick="toggleDone('${day.key}',${exIdx},${s},${ex.sets})">
-            ${isDone ? '✓' : ''}
-          </button>
-        </div>`;
-    }
-    setsHtml += '</div>';
-
-    card.innerHTML = `
-      <div class="exercise-header" onclick="toggleCard(${exIdx})">
-        <div>
-          <div class="exercise-name">${ex.name}</div>
-          <div class="exercise-meta">${ex.sets} séries × ${ex.reps} reps · 3x12→3x15→↑carga</div>
-          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-${exIdx}" style="width:${pct}%"></div></div>
-        </div>
-        <span class="expand-icon">▼</span>
-      </div>
-      <div class="exercise-body">
-        <div class="progression-note">⬆ Progressão: 3×12 → 3×15 → aumentar carga → voltar p/ 3×12</div>
-        ${setsHtml}
-      </div>`;
-
+    const card = buildExCard(day, ex, exIdx);
     container.appendChild(card);
   });
+}
+
+function buildExCard(day, ex, exIdx) {
+  const card = document.createElement('div');
+  card.className = 'exercise-card' + (isAdmin ? ' admin-mode' : '');
+  card.id = `ex-${exIdx}`;
+
+  const doneCount = Array.from({length: ex.sets}, (_, i) =>
+    loadVal(getKey(day.key, exIdx, i, 'done')) === '1').filter(Boolean).length;
+  const pct = Math.round((doneCount / ex.sets) * 100);
+
+  let setsHtml = `
+    <div class="col-headers">
+      <div class="col-h"></div>
+      <div class="col-h">Carga (kg)</div>
+      <div class="col-h">Reps feitas</div>
+      <div class="col-h"></div>
+    </div>
+    <div class="sets-grid">`;
+
+  for (let s = 0; s < ex.sets; s++) {
+    const pesoVal = loadVal(getKey(day.key, exIdx, s, 'peso'));
+    const repsVal = loadVal(getKey(day.key, exIdx, s, 'reps'));
+    const isDone = loadVal(getKey(day.key, exIdx, s, 'done')) === '1';
+    setsHtml += `
+      <div class="set-row">
+        <div class="set-label">S${s+1}</div>
+        <input class="set-input" type="number" placeholder="kg" value="${pesoVal}"
+          oninput="autoSave('${day.key}',${exIdx},${s},'peso',this.value)">
+        <input class="set-input" type="number" placeholder="${ex.reps}" value="${repsVal}"
+          oninput="autoSave('${day.key}',${exIdx},${s},'reps',this.value)">
+        <button class="check-btn ${isDone ? 'done' : ''}" id="chk-${exIdx}-${s}"
+          onclick="toggleDone('${day.key}',${exIdx},${s},${ex.sets})">
+          ${isDone ? '✓' : ''}
+        </button>
+      </div>`;
+  }
+  setsHtml += '</div>';
+
+  card.innerHTML = `
+    <div class="exercise-header" onclick="toggleCard(${exIdx})">
+      <div style="flex:1">
+        <div class="exercise-name">${ex.name}</div>
+        <div class="exercise-meta">${ex.sets} séries × ${ex.reps} reps · próximo da falha</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-${exIdx}" style="width:${pct}%"></div></div>
+      </div>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="exercise-body">
+      <div class="admin-ex-actions">
+        <button class="del-ex-btn" onclick="deleteEx('${day.key}',${exIdx})">🗑 Remover</button>
+        <button class="add-set-btn" onclick="addSet('${day.key}',${exIdx})">+ Série</button>
+        <button class="del-set-btn" onclick="delSet('${day.key}',${exIdx})">− Série</button>
+      </div>
+      <div class="progression-note">⬆ Dupla progressão: ${ex.reps} reps → aumentar carga → repetir</div>
+      ${setsHtml}
+    </div>`;
+
+  return card;
 }
 
 function toggleCard(exIdx) {
@@ -331,45 +418,139 @@ function toggleDone(dayKey, exIdx, setIdx, totalSets) {
   document.getElementById(`prog-${exIdx}`).style.width = Math.round((doneCount / totalSets) * 100) + '%';
 }
 
+// Admin
+function toggleAdmin() {
+  if (isAdmin) {
+    isAdmin = false;
+    document.getElementById('adminBtn').classList.remove('active');
+    buildContent();
+    showToast('Admin desativado');
+  } else {
+    document.getElementById('adminModal').classList.add('visible');
+    setTimeout(() => document.getElementById('adminPass').focus(), 100);
+  }
+}
+
+function checkAdmin() {
+  const pass = document.getElementById('adminPass').value;
+  if (pass === ADMIN_PASS) {
+    isAdmin = true;
+    document.getElementById('adminBtn').classList.add('active');
+    closeModal('adminModal');
+    document.getElementById('adminPass').value = '';
+    buildContent();
+    showToast('✅ Modo admin ativado');
+  } else {
+    showToast('❌ Senha errada');
+    document.getElementById('adminPass').value = '';
+  }
+}
+
+function openAddEx() {
+  document.getElementById('addExModal').classList.add('visible');
+  setTimeout(() => document.getElementById('newExName').focus(), 100);
+}
+
+function confirmAddEx() {
+  const name = document.getElementById('newExName').value.trim();
+  const sets = parseInt(document.getElementById('newExSets').value) || 3;
+  const reps = document.getElementById('newExReps').value.trim() || '8-10';
+  if (!name) { showToast('⚠️ Digite o nome'); return; }
+
+  const days = getDays();
+  const day = days.find(d => d.key === activeDay);
+  if (!day.exercises) day.exercises = [];
+  day.exercises.push({ name, sets, reps });
+  window._DAYS = days;
+
+  closeModal('addExModal');
+  document.getElementById('newExName').value = '';
+  document.getElementById('newExSets').value = '';
+  document.getElementById('newExReps').value = '';
+  buildContent();
+  showToast('✅ Exercício adicionado');
+}
+
+function deleteEx(dayKey, exIdx) {
+  if (!confirm('Remover esse exercício?')) return;
+  const days = getDays();
+  const day = days.find(d => d.key === dayKey);
+  day.exercises.splice(exIdx, 1);
+  window._DAYS = days;
+  buildContent();
+  showToast('🗑 Removido');
+}
+
+function addSet(dayKey, exIdx) {
+  const days = getDays();
+  const day = days.find(d => d.key === dayKey);
+  day.exercises[exIdx].sets++;
+  window._DAYS = days;
+  buildContent();
+  // reopen card
+  setTimeout(() => {
+    const card = document.getElementById(`ex-${exIdx}`);
+    if (card) card.classList.add('open');
+  }, 50);
+}
+
+function delSet(dayKey, exIdx) {
+  const days = getDays();
+  const day = days.find(d => d.key === dayKey);
+  if (day.exercises[exIdx].sets > 1) {
+    day.exercises[exIdx].sets--;
+    window._DAYS = days;
+    buildContent();
+    setTimeout(() => {
+      const card = document.getElementById(`ex-${exIdx}`);
+      if (card) card.classList.add('open');
+    }, 50);
+  }
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('visible');
+}
+
+// Save
 async function saveToCloud() {
-  if (!window._firestoreReady) { showToast('⚠️ Sem conexão com nuvem'); return; }
-  const el = document.getElementById('syncIndicator');
-  const txt = document.getElementById('syncText');
-  el.className = 'sync-indicator syncing';
-  txt.textContent = '⏳ Salvando...';
+  if (!window._firestoreReady) { showToast('⚠️ Sem conexão'); return; }
+  setSyncStatus('syncing', '⏳');
   try {
+    // Save workout data (weights/reps only)
     const allData = {};
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
       if (k.startsWith('pt_')) allData[k] = localStorage.getItem(k);
     }
     await window._setDoc(window._doc(window._db, 'treino', 'dados'), allData);
-    el.className = 'sync-indicator synced';
-    txt.textContent = '☁️ Salvo!';
+
+    // Save structure if admin changed it
+    if (window._DAYS) {
+      await window._setDoc(window._doc(window._db, 'treino', 'estrutura'), { days: window._DAYS });
+    }
+
+    setSyncStatus('synced', '☁️ OK');
     showToast('✅ Salvo na nuvem!');
   } catch(e) {
-    el.className = 'sync-indicator error';
-    txt.textContent = '⚠️ Erro';
+    setSyncStatus('error', '⚠️ Erro');
     showToast('❌ Erro ao salvar');
   }
 }
 
-window.saveToCloud = saveToCloud;
-
-function clearDay() {
-  const day = DAYS.find(d => d.key === activeDay);
-  if (!day.exercises) return;
-  if (!confirm('Limpar todos os dados de hoje?')) return;
+function clearDayData() {
+  const days = getDays();
+  const day = days.find(d => d.key === activeDay);
+  if (!day || !day.exercises) return;
+  if (!confirm('Zerar pesos e reps de hoje? Os exercícios não serão apagados.')) return;
   day.exercises.forEach((ex, exIdx) => {
     for (let s = 0; s < ex.sets; s++) {
       ['peso','reps','done'].forEach(f => localStorage.removeItem(getKey(day.key, exIdx, s, f)));
     }
   });
   buildContent();
-  showToast('🗑 Dia limpo!');
+  showToast('🗑 Treino zerado!');
 }
-
-window.clearDay = clearDay;
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -377,6 +558,20 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
+
+window.toggleAdmin = toggleAdmin;
+window.checkAdmin = checkAdmin;
+window.openAddEx = openAddEx;
+window.confirmAddEx = confirmAddEx;
+window.deleteEx = deleteEx;
+window.addSet = addSet;
+window.delSet = delSet;
+window.closeModal = closeModal;
+window.saveToCloud = saveToCloud;
+window.clearDayData = clearDayData;
+window.toggleCard = toggleCard;
+window.autoSave = autoSave;
+window.toggleDone = toggleDone;
 
 buildNav();
 buildContent();
