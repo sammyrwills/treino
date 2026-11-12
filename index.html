@@ -141,7 +141,7 @@
 <div class="modal-overlay" id="authScreen">
   <form class="modal" onsubmit="authSubmit(false);return false">
     <h2>🏋️ Treino</h2>
-    <input type="email" id="authEmail" placeholder="E-mail" aria-label="E-mail" autocomplete="username" required>
+    <input type="text" id="authEmail" placeholder="Usuário" aria-label="Usuário" autocomplete="username" autocapitalize="none" required>
     <input type="password" id="authPass" placeholder="Senha (mín. 6 caracteres)" aria-label="Senha" autocomplete="current-password" required minlength="6">
     <div id="authErr" role="alert"></div>
     <div class="modal-btns">
@@ -198,12 +198,12 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD28ScvbVAsTt11cmwSg0MzOuwYwWqDTZo",
+  apiKey: "AIzaSyD28ScvbVAsTt11cmwSg0MzOuwYwBZVzrg",
   authDomain: "treino-helle-89cff.firebaseapp.com",
   projectId: "treino-helle-89cff",
   storageBucket: "treino-helle-89cff.firebasestorage.app",
   messagingSenderId: "988594775431",
-  appId: "1:988594775431:web:9f2753b32941dcb49c5542"
+  appId: "1:988594775431:web:9f2753b32941dcbbd35f22"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -213,10 +213,10 @@ const ptKeys = () => Object.keys(localStorage).filter(k => k.startsWith('pt_'));
 const wipeLocal = () => ptKeys().forEach(k => localStorage.removeItem(k));
 
 const AUTH_ERRORS = {
-  'auth/invalid-credential': 'E-mail ou senha errados.',
-  'auth/email-already-in-use': 'Esse e-mail já tem conta. Clique em Entrar.',
+  'auth/invalid-credential': 'Usuário ou senha errados.',
+  'auth/email-already-in-use': 'Esse usuário já existe. Clique em Entrar ou escolha outro nome.',
   'auth/weak-password': 'Senha muito curta (mínimo 6).',
-  'auth/invalid-email': 'E-mail inválido.',
+  'auth/invalid-email': 'Usuário inválido.',
   'auth/missing-password': 'Digite a senha.',
   'auth/operation-not-allowed': 'Login por e-mail/senha não está ativado no Firebase.',
   'auth/network-request-failed': 'Sem conexão.',
@@ -224,9 +224,12 @@ const AUTH_ERRORS = {
 window.authSubmit = async (create) => {
   const err = document.getElementById('authErr');
   err.textContent = '';
+  const nome = document.getElementById('authEmail').value.trim().toLowerCase();
+  if (!/^[a-z0-9._-]{3,20}$/.test(nome)) { err.textContent = 'Usuário: 3 a 20 letras, números, ponto, _ ou -.'; return; }
   try {
+    // shortcut: o Firebase Auth exige e-mail, então o usuário vira um e-mail falso. Sem "esqueci a senha" (reset só pelo console); trocar por e-mail real se precisar.
     await (create ? createUserWithEmailAndPassword : signInWithEmailAndPassword)(
-      auth, document.getElementById('authEmail').value.trim(), document.getElementById('authPass').value);
+      auth, nome + '@treino.local', document.getElementById('authPass').value);
   } catch(e) { err.textContent = AUTH_ERRORS[e.code] || 'Erro: ' + e.code; }
 };
 
@@ -240,7 +243,7 @@ window.logout = async () => {
 onAuthStateChanged(auth, async user => {
   document.getElementById('authScreen').classList.toggle('visible', !user);
   if (!user) return;
-  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('userEmail').textContent = user.email.split('@')[0];
   // dados locais de outra conta nunca vazam pra esta
   const prev = localStorage.getItem('treino_uid');
   if (prev && prev !== user.uid) { wipeLocal(); localStorage.removeItem('treino_dirty'); }
