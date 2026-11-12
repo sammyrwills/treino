@@ -148,6 +148,9 @@
       <button type="button" class="modal-btn modal-btn-ghost" onclick="authSubmit(true)">Criar conta</button>
       <button type="submit" class="modal-btn modal-btn-primary">Entrar</button>
     </div>
+    <div class="modal-btns" style="margin-top:10px">
+      <button type="button" class="modal-btn modal-btn-ghost" onclick="googleLogin()">Entrar com Google</button>
+    </div>
   </form>
 </div>
 
@@ -194,7 +197,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -220,6 +223,8 @@ const AUTH_ERRORS = {
   'auth/missing-password': 'Digite a senha.',
   'auth/operation-not-allowed': 'Login por e-mail/senha não está ativado no Firebase.',
   'auth/network-request-failed': 'Sem conexão.',
+  'auth/unauthorized-domain': 'Este site não está nos domínios autorizados do Firebase Auth.',
+  'auth/popup-blocked': 'O navegador bloqueou a janela do Google. Libere pop-ups e tente de novo.',
 };
 window.authSubmit = async (create) => {
   const err = document.getElementById('authErr');
@@ -231,6 +236,13 @@ window.authSubmit = async (create) => {
     await (create ? createUserWithEmailAndPassword : signInWithEmailAndPassword)(
       auth, nome + '@treino.local', document.getElementById('authPass').value);
   } catch(e) { err.textContent = AUTH_ERRORS[e.code] || 'Erro: ' + e.code; }
+};
+
+window.googleLogin = async () => {
+  const err = document.getElementById('authErr');
+  err.textContent = '';
+  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch(e) { if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') err.textContent = AUTH_ERRORS[e.code] || 'Erro: ' + e.code; }
 };
 
 window.logout = async () => {
